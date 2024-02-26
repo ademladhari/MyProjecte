@@ -1,20 +1,17 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+// App.js
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import React from "react";
+import AppNavigator from "./src/navigater/AppNavigator";
+import { Provider } from "react-redux";
+import store from "./src/redux/store/store";
+import { AuthProvider } from "./src/redux/reducers/reducerauth2";
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const App = () => {
+  return;
+  <AuthProvider>
+    <AppNavigator />;
+  </AuthProvider>;
+};
+
+export default App;
