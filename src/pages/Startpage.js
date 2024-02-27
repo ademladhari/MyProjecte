@@ -12,7 +12,7 @@ import Buttom from "../components/Buttom";
 
 export default function Startpage({ navigation }) {
   const goToAuthScreen = () => {
-    navigation.navigate("auth");
+    navigation.navigate("Auth");
   };
   return (
     <View>

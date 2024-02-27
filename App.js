@@ -1,17 +1,16 @@
-// App.js
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-
 import React from "react";
-import AppNavigator from "./src/navigater/AppNavigator";
 import { Provider } from "react-redux";
-import store from "./src/redux/store/store";
-import { AuthProvider } from "./src/redux/reducers/reducerauth2";
+import { store } from "./src/redux/store/store";
+import  AppNavigator  from "./src/navigater/AppNavigator";
+// Import your Redux store
+// Example import of your main component
 
 const App = () => {
-  return;
-  <AuthProvider>
-    <AppNavigator />;
-  </AuthProvider>;
+  return (
+    <Provider store={store}>
+      <AppNavigator />
+    </Provider>
+  );
 };
 
 export default App;

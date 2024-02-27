@@ -1,34 +1,37 @@
-import React, { createContext, useReducer } from "react";
+import { LOGIN_FAILURE, LOGIN_SUCCESS, LOGOUT_SUCCESS } from "../actions/actionAuth";
 
-// Define initial state
-const initialState = {};
+const initialState = {
+  isAuthenticated: false,
+  user: null,
+  error: null,
+};
 
-// Define reducer function
-const reducer = (state, action) => {
+const authReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "SET_AUTH":
-      return { ...state, auth: action.payload };
+    case LOGIN_SUCCESS:
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.payload.user,
+        error: null,
+      };
+    case LOGIN_FAILURE:
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+        error: action.payload.error,
+      };
+    case LOGOUT_SUCCESS:
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+        error: null,
+      };
     default:
       return state;
   }
 };
 
-// Create context
-const AuthContext = createContext(initialState);
-
-// Create provider component
-export const AuthProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const setAuth = (authData) => {
-    dispatch({ type: "SET_AUTH", payload: authData });
-  };
-
-  return (
-    <AuthContext.Provider value={{ auth: state.auth, setAuth }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export default AuthContext;
+export default authReducer;
