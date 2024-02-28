@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import Buttom from "../components/Buttom";
 
-export default function Startpage({ navigation }) {
+export default function StartPage({ navigation }) {
   const goToAuthScreen = () => {
     navigation.navigate("Auth");
   };

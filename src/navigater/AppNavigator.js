@@ -1,10 +1,11 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import Startpage from "../pages/Startpage";
+import Startpage from "../pages/StartPage";
 // Import your screens
 // Corrected naming convention
 import Auth from "../pages/Auth";
+import HomePage from "../pages/HomePage";
 
 const Stack = createStackNavigator();
 
@@ -20,7 +21,7 @@ const AppNavigator = () => {
         <Stack.Screen
           options={{ headerShown: false }}
           name="Auth"
-          component={Auth}
+          component={HomePage}
         />
       </Stack.Navigator>
     </NavigationContainer>
