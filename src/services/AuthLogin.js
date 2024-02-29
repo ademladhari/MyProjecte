@@ -1,22 +1,21 @@
-// services/authService.js
-export const login = async (username, password) => {
+export const login = async (email, password) => {
   try {
-    // Simulating login request
-    const response = await fetch("http://localhost:3000/api/auth/register", {
+    const response = await fetch("http://10.0.2.2:3000/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, password }),
+
+      body: JSON.stringify({ email, password }),
     });
-         console.log(response)
+    console.log(response);
     if (!response.ok) {
       throw new Error("Login failed");
     }
-    console.log(response)
 
     const data = await response.json();
-    return data.token; // Assuming your API returns a token upon successful login
+    console.log(data);
+    return data; // Return response data
   } catch (error) {
     throw error;
   }

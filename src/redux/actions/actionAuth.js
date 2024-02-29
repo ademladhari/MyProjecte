@@ -13,14 +13,15 @@ export const CHECK_AUTHENTICATION_REQUEST = "CHECK_AUTHENTICATION_REQUEST";
 export const CHECK_AUTHENTICATION_SUCCESS = "CHECK_AUTHENTICATION_SUCCESS";
 export const CHECK_AUTHENTICATION_FAILURE = "CHECK_AUTHENTICATION_FAILURE";
 
-export const loginUser = (username, password) => {
+export const loginUser = (username, password, navigation) => {
   return async (dispatch) => {
     try {
       const token = await login(username, password);
       console.log(token);
       dispatch({ type: LOGIN_SUCCESS, payload: token });
+      navigation;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       dispatch({ type: LOGIN_FAILURE, payload: error.message });
     }
   };

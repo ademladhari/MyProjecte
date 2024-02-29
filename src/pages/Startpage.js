@@ -3,12 +3,14 @@ import { StatusBar } from "expo-status-bar";
 import {
   Button,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import Buttom from "../components/Buttom";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function StartPage({ navigation }) {
   const goToAuthScreen = () => {
@@ -35,7 +37,8 @@ export default function StartPage({ navigation }) {
       />
       <StatusBar style="auto" />
     </View>
-  );
+  ); 
+
 }
 const styles = StyleSheet.create({
   gradientBackground: {

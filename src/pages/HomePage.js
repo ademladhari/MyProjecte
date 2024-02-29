@@ -3,15 +3,23 @@ import { StatusBar } from "expo-status-bar";
 import {
   Button,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  ScrollY,
 } from "react-native";
 import CardSomething from "../components/CardSomething";
+import Carddelivery from "../components/Carddelivery";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import { data } from "../services/ServiceData";
 
 export default function HomePage({ navigation }) {
   const currentDate = new Date();
+
   // Format date as desired (e.g., "February 28, 2024")
   const formattedDate = currentDate.toLocaleDateString("en-EUROPE", {
     weekday: "long",
@@ -19,6 +27,36 @@ export default function HomePage({ navigation }) {
     month: "long",
     year: "numeric",
   });
+
+  const dispatch = useDispatch();
+  const medications = useSelector((state) => state.medications);
+
+  const [filteredMedications, setFilteredMedications] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await dispatch(data);
+
+        console.log("Action dispatched successfully");
+      } catch (error) {
+        console.error("Error dispatching fetchMedications:", error);
+      }
+    };
+    fetchData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Filter medications based on the search query and selected category
+    if (medications && medications["testing"]) {
+      let filteredMeds = medications["testin"];
+      console.log("r");
+      setFilteredMedications(filteredMeds);
+      console.log(filteredMeds);
+    } else {
+      setFilteredMedications(null);
+    }
+  }, [medications]);
 
   return (
     <>
@@ -41,8 +79,41 @@ export default function HomePage({ navigation }) {
           color="red-400"
         />
       </View>
+
       <Text className="text-xl mt-3 ml-4"> Pending</Text>
-      <View></View>
+      <ScrollView className="h-[20%] ">
+        {filteredMedications !== null ? (
+          filteredMedications.map((medication, index) => (
+            <View className="h-[30%]">
+              <TouchableOpacity
+                key={index}
+                onPress={() =>
+                  navigation.navigate("MedicationDetails", {
+                    name: medication.name,
+                    image: require("../../assets/pendinggg.png"),
+                    description: medication.description,
+                    price: medication.price,
+                  })
+                }
+                style={styles.cardContainer}
+              >
+                <Carddelivery
+                  key={index}
+                  // img={require("../../assets/pendinggg.png")}
+                  // deliveredOrPending={"Pending"}
+                  // number={27}
+                  // color="red-400"
+                  name={medication.name}
+                  description={medication.description}
+                  price={medication.price}
+                />
+              </TouchableOpacity>
+            </View>
+          ))
+        ) : (
+          <Text>Loading loding data...</Text>
+        )}
+      </ScrollView>
     </>
   );
 }

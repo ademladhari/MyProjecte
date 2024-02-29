@@ -1,31 +1,104 @@
-import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import Startpage from "../pages/StartPage";
-// Import your screens
-// Corrected naming convention
+import { Ionicons } from "@expo/vector-icons"; // Import Ionicons from Expo
+import { SvgUri } from "react-native-svg";
+import StartPage from "../pages/StartPage"; // Corrected naming convention
 import Auth from "../pages/Auth";
 import HomePage from "../pages/HomePage";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Image } from "react-native";
+import { DetailsScreen } from "../pages/DetailsScreen";
 
 const Stack = createStackNavigator();
+const tab = createBottomTabNavigator();
 
 const AppNavigator = () => {
+  const isLoggedIn = true; // Set the authentication status here
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="Startup" // Corrected screen name
-          component={Startpage} // Corrected component name
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="Auth"
-          component={HomePage}
-        />
+        {!isLoggedIn ? (
+          <>
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="Startup"
+              component={StartPage}
+            />
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="Auth"
+              component={Auth}
+            />
+          </>
+        ) : (
+          <>
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="et"
+              component={HomeScreen}
+            />
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="Details"
+              component={DetailsScreen}
+            />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
+
+const HomeScreen = () => (
+  <tab.Navigator>
+    <tab.Screen
+      name="Home"
+      component={HomePage}
+      options={{
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="home" color={color} size={size} />
+        ),
+      }}
+    />
+    {/* <tab.Screen
+      name="Auth"
+      component={Auth}
+      options={{
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => (
+          <SvgUri
+            uri={require("../../assets/reshot-icon-deliveryman-WXMKFGR8LT.svg")}
+            width="100%"
+            height="100%"
+            fill={color}
+          />
+        ),
+      }}
+    />
+    <tab.Screen
+      name="s"
+      component={HomePage}
+      options={{
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="notifications" color={color} size={size} />
+        ),
+      }}
+    />
+    <tab.Screen
+      name="not"
+      component={Auth}
+      options={{
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="person" color={color} size={size} />
+        ),
+      }}
+    /> */}
+    {/* Add more screens here if needed */}
+  </tab.Navigator>
+);
 
 export default AppNavigator;

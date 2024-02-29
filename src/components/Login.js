@@ -10,14 +10,16 @@ import Buttom from "./Buttom";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../redux/actions/actionAuth";
 
-const Login = () => {
-  const dispatch = useDispatch()
+const Login = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const handleLogin = () => {
-    dispatch(loginUser(username, password));
+  const goToAuthScreen = () => {
+    navigation.navigate("HomePage");
   };
-
+  const handleLogin = () => {
+    dispatch(loginUser(username, password, goToAuthScreen));
+  };
 
   return (
     <View>
