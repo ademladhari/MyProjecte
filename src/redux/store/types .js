@@ -4,7 +4,7 @@ export const FETCH_MEDICATIONS_ACTION = {
   type: FETCH_MEDICATIONS,
 };
 
-export const MEDICATION_STATE_INITIAL = {
+export const UPDATE_MEDICATIONS = {
   medications: [],
 };
 

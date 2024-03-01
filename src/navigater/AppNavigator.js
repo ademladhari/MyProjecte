@@ -40,7 +40,7 @@ const AppNavigator = () => {
             />
             <Stack.Screen
               options={{ headerShown: false }}
-              name="Details"
+              name="DetailsScreen"
               component={DetailsScreen}
             />
           </>
@@ -62,7 +62,7 @@ const HomeScreen = () => (
         ),
       }}
     />
-    {/* <tab.Screen
+    <tab.Screen
       name="Auth"
       component={Auth}
       options={{
@@ -96,7 +96,7 @@ const HomeScreen = () => (
           <Ionicons name="person" color={color} size={size} />
         ),
       }}
-    /> */}
+    />
     {/* Add more screens here if needed */}
   </tab.Navigator>
 );

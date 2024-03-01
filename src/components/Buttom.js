@@ -6,14 +6,14 @@ const Buttom = (props) => {
     <View>
       <TouchableOpacity
         title="Start"
-        className={` w-[${width}] h-[${height}]  mx-auto  mt-7  rounded-xl`}
+        className={` w-[${width}] h-[${height}]  mx-auto  mt-7pt-2  rounded-xl`}
         onPress={route}
       >
         <LinearGradient
           className="rounded-xl"
           colors={["#7289F1", "#AEBFF4"]} // Define your gradient colors
         >
-          <Text className="pb-2 text-center pt-2  text-2xl">{name}</Text>
+          <Text className="pb-1 text-center pt-3  text-2xl">{name}</Text>
         </LinearGradient>
       </TouchableOpacity>
     </View>

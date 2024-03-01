@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { data } from "../services/ServiceData";
+import { fetchMedications } from "../redux/actions/actiondata";
 
 export default function HomePage({ navigation }) {
   const currentDate = new Date();
@@ -36,7 +37,8 @@ export default function HomePage({ navigation }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await dispatch(data);
+        await dispatch(fetchMedications()); // This line should dispatch the action
+        // Make sure you are getting the data from the action
 
         console.log("Action dispatched successfully");
       } catch (error) {
@@ -47,9 +49,10 @@ export default function HomePage({ navigation }) {
   }, [dispatch]);
 
   useEffect(() => {
+    console.log("ded", medications);
     // Filter medications based on the search query and selected category
-    if (medications && medications["testing"]) {
-      let filteredMeds = medications["testin"];
+    if (medications && medications["medications"]) {
+      let filteredMeds = medications["medications"];
       console.log("r");
       setFilteredMedications(filteredMeds);
       console.log(filteredMeds);
@@ -84,11 +87,11 @@ export default function HomePage({ navigation }) {
       <ScrollView className="h-[20%] ">
         {filteredMedications !== null ? (
           filteredMedications.map((medication, index) => (
-            <View className="h-[30%]">
+            <View className="h-[80px] my-3">
               <TouchableOpacity
                 key={index}
                 onPress={() =>
-                  navigation.navigate("MedicationDetails", {
+                  navigation.navigate("DetailsScreen", {
                     name: medication.name,
                     image: require("../../assets/pendinggg.png"),
                     description: medication.description,
@@ -103,9 +106,11 @@ export default function HomePage({ navigation }) {
                   // deliveredOrPending={"Pending"}
                   // number={27}
                   // color="red-400"
+                  matrecule={medication.matercule}
                   name={medication.name}
-                  description={medication.description}
                   price={medication.price}
+                  place={medication.adress}
+                  color={"p"}
                 />
               </TouchableOpacity>
             </View>
