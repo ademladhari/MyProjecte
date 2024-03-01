@@ -18,7 +18,7 @@ export default function Auth({ navigation }) {
         source={require("../../assets/authimg.png")}
       />
       <View className=" bg-slate-100 shadow-lg  shadow-black w-[80%] m-auto h-[67%] mt-[50%] rounded-xl">
-        <Login />
+        <Login navigation={navigation} />
       </View>
     </View>
   );

@@ -15,10 +15,14 @@ const Login = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const goToAuthScreen = () => {
-    navigation.navigate("HomePage");
+    navigation.navigate("HomeScreen");
   };
   const handleLogin = () => {
-    dispatch(loginUser(username, password, goToAuthScreen));
+    dispatch(
+      loginUser(username, password, () => {
+        navigation.navigate("HomeScreen");
+      })
+    );
   };
 
   return (

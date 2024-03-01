@@ -8,13 +8,18 @@ import HomePage from "../pages/HomePage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Image } from "react-native";
 import { DetailsScreen } from "../pages/DetailsScreen";
+import DeliveryPage from "../pages/deliveries-page";
+import profile from "../pages/profile";
+import Profile from "../pages/profile";
+import { useSelector } from "react-redux";
 
 const Stack = createStackNavigator();
 const tab = createBottomTabNavigator();
 
-const AppNavigator = () => {
-  const isLoggedIn = true; // Set the authentication status here
-
+const AppNavigator = ({ log }) => {
+  // Set the authentication status here
+  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+  console.log(isLoggedIn);
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -35,7 +40,7 @@ const AppNavigator = () => {
           <>
             <Stack.Screen
               options={{ headerShown: false }}
-              name="et"
+              name="HomeScreen"
               component={HomeScreen}
             />
             <Stack.Screen
@@ -63,8 +68,8 @@ const HomeScreen = () => (
       }}
     />
     <tab.Screen
-      name="Auth"
-      component={Auth}
+      name="Delivery"
+      component={DeliveryPage}
       options={{
         headerShown: false,
         tabBarIcon: ({ color, size }) => (
@@ -78,7 +83,7 @@ const HomeScreen = () => (
       }}
     />
     <tab.Screen
-      name="s"
+      name="HomeScreen"
       component={HomePage}
       options={{
         headerShown: false,
@@ -88,8 +93,8 @@ const HomeScreen = () => (
       }}
     />
     <tab.Screen
-      name="not"
-      component={Auth}
+      name="profile"
+      component={Profile}
       options={{
         headerShown: false,
         tabBarIcon: ({ color, size }) => (

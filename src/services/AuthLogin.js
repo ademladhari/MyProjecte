@@ -1,6 +1,6 @@
 export const login = async (email, password) => {
   try {
-    const response = await fetch("http://10.0.2.2:3000/api/auth/login", {
+    const response = await fetch("http://192.168.0.4:3000/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
