@@ -7,18 +7,28 @@ import CustomerDetails from "../components/CustomerDetails";
 import Buttom from "../components/Buttom";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 
-export const DetailsScreen = ({ route }) => {
+export const DetailsScreen = ({ route, navigation }) => {
   const { name, description, image, price } = route.params;
 
   return (
     <View className="h-screen ">
       <View className="w-full h-[5%]  bg-blue-600 text-red-400"></View>
-      <View className="h-[3%]  flex flex-row mb-4 ">
-        <Image
-          className="w-[8%] h-[100%] ml-2 mt-3"
-          source={require("../../assets/back.png")}
-        ></Image>
+      <View className=" flex flex-row mb-4 ">
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("HomeScreen");
+          }}
+        >
+          <Ionicons
+            name="chevron-back"
+            size={34}
+            color="blue"
+            className=" ml-2 mt-8"
+          />
+        </TouchableOpacity>
+
         <Text className="text-2xl h-[100%]  ml-20 mt-3">Delivery Details</Text>
       </View>
       <View>
@@ -39,7 +49,7 @@ export const DetailsScreen = ({ route }) => {
         <CustomerDetails />
       </View>
       <View className="h-[10%] mt-7">
-        <Buttom name={"Submit"} width={"80%"} height={"100px"}></Buttom>
+        <Buttom name={"livree"} width={"80%"} height={"100px"}></Buttom>
       </View>
     </View>
   );

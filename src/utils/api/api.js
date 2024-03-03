@@ -5,3 +5,8 @@ export const getApi = axios.create({
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });
+export const getApiAuth = axios.create({
+  baseURL: "http://192.168.0.4:3000/api/auth/",
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true,
+});

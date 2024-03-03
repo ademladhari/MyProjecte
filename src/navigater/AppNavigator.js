@@ -2,7 +2,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons"; // Import Ionicons from Expo
 import { SvgUri } from "react-native-svg";
-import StartPage from "../pages/StartPage"; // Corrected naming convention
 import Auth from "../pages/Auth";
 import HomePage from "../pages/HomePage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -11,14 +10,22 @@ import { DetailsScreen } from "../pages/DetailsScreen";
 import DeliveryPage from "../pages/deliveries-page";
 import profile from "../pages/profile";
 import Profile from "../pages/profile";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import StartPage from "../pages/StartPage";
+import { useEffect } from "react";
+import { checkAuthentication } from "../redux/actions/actionAuth";
 
 const Stack = createStackNavigator();
 const tab = createBottomTabNavigator();
 
-const AppNavigator = ({ log }) => {
+const AppNavigator = ({ navigation }) => {
   // Set the authentication status here
-  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(checkAuthentication());
+  }, []);
   console.log(isLoggedIn);
   return (
     <NavigationContainer>

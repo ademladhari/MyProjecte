@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,21 +8,28 @@ import {
 } from "react-native";
 import Buttom from "./Buttom";
 import { useDispatch } from "react-redux";
-import { loginUser } from "../redux/actions/actionAuth";
+import { checkAuthentication, loginUser } from "../redux/actions/actionAuth";
+import { createStackNavigator } from "@react-navigation/stack";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({ navigation }) => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const goToAuthScreen = () => {
-    navigation.navigate("HomeScreen");
-  };
-  const handleLogin = () => {
-    dispatch(
-      loginUser(username, password, () => {
-        navigation.navigate("HomeScreen");
-      })
-    );
+  const Stack = createStackNavigator();
+
+  const handleLogin = async () => {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) {
+      dispatch(
+        loginUser(username, password, () => {
+          navigation.navigate("HomeScreen")
+        })
+      );
+    } else {
+      dispatch(checkAuthentication(() => {
+        navigation.navigate("HomeScreen")}));
+    }
   };
 
   return (

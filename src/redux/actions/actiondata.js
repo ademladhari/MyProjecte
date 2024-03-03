@@ -7,7 +7,6 @@ export const fetchMedications = () => {
       // Fetch medications data using the fetchData function
       const response = await data();
 
-      console.log("Medications Data:", response);
 
       // Dispatch the action with the medications data
       dispatch({

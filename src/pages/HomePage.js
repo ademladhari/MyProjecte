@@ -49,13 +49,11 @@ export default function HomePage({ navigation }) {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("ded", medications);
     // Filter medications based on the search query and selected category
     if (medications && medications["medications"]) {
       let filteredMeds = medications["medications"];
-      console.log("r");
+
       setFilteredMedications(filteredMeds);
-      console.log(filteredMeds);
     } else {
       setFilteredMedications(null);
     }
@@ -87,7 +85,7 @@ export default function HomePage({ navigation }) {
       <ScrollView className="h-[20%] ">
         {filteredMedications !== null ? (
           filteredMedications.map((medication, index) => (
-            <View className="h-[80px] my-3">
+            <View className="h-[100px] my-3">
               <TouchableOpacity
                 key={index}
                 onPress={() =>

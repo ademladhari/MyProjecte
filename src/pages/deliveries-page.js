@@ -48,13 +48,11 @@ export default function DeliveryPage({ navigation }) {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("ded", medications);
     // Filter medications based on the search query and selected category
     if (medications && medications["medications"]) {
       let filteredMeds = medications["medications"];
-      console.log("r");
+
       setFilteredMedications(filteredMeds);
-      console.log(filteredMeds);
     } else {
       setFilteredMedications(null);
     }
