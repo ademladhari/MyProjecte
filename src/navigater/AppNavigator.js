@@ -11,22 +11,20 @@ import DeliveryPage from "../pages/deliveries-page";
 import profile from "../pages/profile";
 import Profile from "../pages/profile";
 import { useDispatch, useSelector } from "react-redux";
-import StartPage from "../pages/StartPage";
-import { useEffect } from "react";
 import { checkAuthentication } from "../redux/actions/actionAuth";
+import { useEffect } from "react";
 
 const Stack = createStackNavigator();
 const tab = createBottomTabNavigator();
 
 const AppNavigator = ({ navigation }) => {
-  // Set the authentication status here
-
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(checkAuthentication());
   }, []);
-  console.log(isLoggedIn);
+  // Set the authentication status here
+  // const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (
     <NavigationContainer>
       <Stack.Navigator>
