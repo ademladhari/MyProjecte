@@ -13,6 +13,7 @@ import Profile from "../pages/profile";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuthentication } from "../redux/actions/actionAuth";
 import { useEffect } from "react";
+import NotificationsPage from "../pages/notification-page";
 
 const Stack = createStackNavigator();
 const tab = createBottomTabNavigator();
@@ -30,11 +31,11 @@ const AppNavigator = ({ navigation }) => {
       <Stack.Navigator>
         {!isLoggedIn ? (
           <>
-            <Stack.Screen
+            {/*<Stack.Screen
               options={{ headerShown: false }}
               name="Startup"
               component={StartPage}
-            />
+            />*/}
             <Stack.Screen
               options={{ headerShown: false }}
               name="Auth"
@@ -88,8 +89,8 @@ const HomeScreen = () => (
       }}
     />
     <tab.Screen
-      name="HomeScreen"
-      component={HomePage}
+      name="Notification"
+      component={NotificationsPage}
       options={{
         headerShown: false,
         tabBarIcon: ({ color, size }) => (
