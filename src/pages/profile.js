@@ -41,17 +41,15 @@ export default function Profile({ navigation }) {
         {userData && (
           <ProfileSetting
             name={userData.Name}
-            Phonenumber={userData.phoneNumber}
-            password={userData.password}
-            adress={userData.address}
-            region={userData.region}
+            Phonenumber={userData.TelMobile}
+            password={userData.Password}
           />
         )}
       </View>
 
       <View>
         {userData && (
-          <AdressCard region={userData.region} address={userData.address} />
+          <AdressCard adress={userData.Address} region={userData.Governorate} />
         )}
       </View>
       <View>
