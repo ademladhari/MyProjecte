@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
 import { login } from "../../services/AuthLogin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native"; // Import Alert from react-native
 import { getUserData } from "./ActionUser";
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -19,16 +20,17 @@ export const loginUser = (username, password) => {
   return async (dispatch) => {
     try {
       const { token, user } = await login(username, password);
-      console.log("clf", user);
       // Store token in AsyncStorage
       await AsyncStorage.setItem("token", token);
       dispatch({
         type: LOGIN_SUCCESS,
         payload: { token, user },
       });
+      // Show success alert
     } catch (error) {
-      console.log(error);
       dispatch({ type: LOGIN_FAILURE, payload: error.message });
+      // Show error alert
+      showAlert("Login Failed");
     }
   };
 };
@@ -39,21 +41,25 @@ export const checkAuthentication = () => {
     try {
       const token = await AsyncStorage.getItem("token");
       const user = await AsyncStorage.getItem("userData"); // Example function to fetch user data
-      console.log("hhhhh", user);
-      console.log(token);
       if (token) {
         dispatch({
           type: CHECK_AUTHENTICATION_SUCCESS,
           payload: { token, user },
         });
+        // Show success alert
       } else {
         dispatch({ type: CHECK_AUTHENTICATION_FAILURE });
+        // Show error alert
+        showAlert("Authentication Failed");
       }
     } catch (error) {
       dispatch({ type: CHECK_AUTHENTICATION_FAILURE, payload: error.message });
+      // Show error alert
+      showAlert("Error: Authentication Failed");
     }
   };
 };
+
 export const logoutUser = () => {
   return async (dispatch) => {
     try {
@@ -62,8 +68,22 @@ export const logoutUser = () => {
       await AsyncStorage.removeItem("userData");
 
       dispatch({ type: LOGOUT_SUCCESS });
+      // Show success alert
+      showAlert("Logout Successful");
     } catch (error) {
       dispatch({ type: LOGOUT_FAILURE, payload: error.message });
+      // Show error alert
+      showAlert("Logout Failed");
     }
   };
+};
+
+// Function to show an alert
+const showAlert = (message) => {
+  Alert.alert(
+    "Alert",
+    message,
+    [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+    { cancelable: false }
+  );
 };

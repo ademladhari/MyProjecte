@@ -1,8 +1,15 @@
-import React from "react";
-import { Image, Linking, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Image, Linking, Text, TouchableOpacity, View, PermissionsAndroid } from "react-native";
 import Geolocation from "@react-native-community/geolocation";
+
 const CustomerDetails = (prop) => {
   const { Address, number, deliveredOrPending, color } = prop;
+  const [locationPermission, setLocationPermission] = useState(false);
+
+  useEffect(() => {
+    requestLocationPermission();
+  }, []);
+
   const Line = ({ color = "black", height = 1, width = "100%" }) => (
     <View
       style={{
@@ -13,31 +20,53 @@ const CustomerDetails = (prop) => {
       }}
     />
   );
-  const openMapWithDirections = (address) => {
-    Geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const encodedAddress = encodeURIComponent(address);
-        const url = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}&origin=${latitude},${longitude}`;
-        Linking.openURL(url);
-      },
-      (error) => console.log(error),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    );
-  };
-  function MapWithDirections({ address }) {
-    useEffect(() => {
-      openMapWithDirections(address);
-    }, []);
 
-    return null;
-  }
+  const openMapWithDirections = (address) => {
+    if (locationPermission) {
+      Geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const encodedAddress = encodeURIComponent(address);
+          const url = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}&origin=${latitude},${longitude}`;
+          Linking.openURL(url);
+        },
+        (error) => console.log(error),
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+      );
+    } else {
+      console.log("Location permission not granted");
+      // You can handle this case, e.g., by displaying a message to the user
+    }
+  };
 
   const handleCallPress = () => {
     Linking.openURL(`tel:${number}`);
   };
+
+  const requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Permission',
+          message: 'This app requires access to your location.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        setLocationPermission(true);
+      } else {
+        setLocationPermission(false);
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
   return (
-    <View className=" w-[90%] h-[100%] flex flex-col bg-[#FFFFFE]    ml-5 rounded-md  ">
+    <View className=" w-[90%] h-[100%] flex flex-col bg-[#FFFFFE] ml-5 rounded-md  ">
       <View className="h-[33%] w-[100%] flex flex-row">
         <View className="flex w-[80%] flex-col p-6  ">
           <Text className="text-lg text-[#acacac]">Full Name</Text>
@@ -66,7 +95,7 @@ const CustomerDetails = (prop) => {
       <View className="h-[30%] w-[100%] flex flex-row">
         <View className="flex w-[78%] flex-col p-6  ">
           <Text className="text-lg text-[#acacac]">Delivery Address</Text>
-          <TouchableOpacity onPress={() => MapWithDirections(Address)}>
+          <TouchableOpacity onPress={() => openMapWithDirections(Address)}>
             <Text className="text-xl mt-2 ">{Address}</Text>
           </TouchableOpacity>
         </View>

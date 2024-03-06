@@ -33,8 +33,10 @@ export default function Profile({ navigation }) {
 
   return (
     <View>
-      <View>
-        <Text>Welcome, {userData && userData.Email}</Text>
+      <View className="mt-12 text-lg font-bold mb-14 ">
+        <Text className="text-center font-bold">
+          Welcome, {userData && userData.Email}
+        </Text>
       </View>
 
       <View>

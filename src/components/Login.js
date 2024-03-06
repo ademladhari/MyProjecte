@@ -23,12 +23,15 @@ const Login = ({ navigation }) => {
     if (!token) {
       dispatch(
         loginUser(username, password, () => {
-          navigation.navigate("HomeScreen")
+          navigation.navigate("HomeScreen");
         })
       );
     } else {
-      dispatch(checkAuthentication(() => {
-        navigation.navigate("HomeScreen")}));
+      dispatch(
+        checkAuthentication(() => {
+          navigation.navigate("HomeScreen");
+        })
+      );
     }
   };
 
