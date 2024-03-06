@@ -65,7 +65,7 @@ export const DetailsScreen = ({ route, navigation }) => {
         <CustomerDetails number={userData.TelMobile} Address={userData.Governorate} />
       )}</View>
       <View className="h-[10%] mt-7">
-        <Buttom name={"livree"} width={"80%"} height={"100px"}></Buttom>
+    
       </View>
     </View>
   );
