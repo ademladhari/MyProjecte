@@ -5,6 +5,6 @@ import medicationReducer from "../reducers/ReducerData";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    medications: medicationReducer,
+    demandes: medicationReducer,
   },
 });

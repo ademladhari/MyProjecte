@@ -30,10 +30,10 @@ export default function HomePage({ navigation }) {
   });
 
   const dispatch = useDispatch();
-  const medications = useSelector((state) => state.medications);
-
+  const demandes = useSelector((state) => state.demandes.demandes);
+  console.log("here", demandes);
   const [filteredMedications, setFilteredMedications] = useState(null);
-
+  console.log("home", demandes);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,15 +49,15 @@ export default function HomePage({ navigation }) {
   }, [dispatch]);
 
   useEffect(() => {
-    // Filter medications based on the search query and selected category
-    if (medications && medications["medications"]) {
-      let filteredMeds = medications["medications"];
+    // Filter demandes based on the search query and selected category
+    if (demandes && demandes) {
+      let filteredMeds = demandes;
 
       setFilteredMedications(filteredMeds);
     } else {
       setFilteredMedications(null);
     }
-  }, [medications]);
+  }, [demandes]);
 
   return (
     <>
@@ -80,20 +80,18 @@ export default function HomePage({ navigation }) {
           color="red-400"
         />
       </View>
-
-      <Text className="text-xl mt-3 ml-4"> Pending</Text>
       <ScrollView className="h-[20%] ">
         {filteredMedications !== null ? (
-          filteredMedications.map((medication, index) => (
-            <View className="h-[100px] my-3">
+          filteredMedications.map((demandes, index) => (
+            <View className="h-[80px] my-3">
               <TouchableOpacity
                 key={index}
                 onPress={() =>
                   navigation.navigate("DetailsScreen", {
-                    name: medication.name,
+                    name: demandes.requestName,
                     image: require("../../assets/pendinggg.png"),
-                    description: medication.description,
-                    price: medication.price,
+                    description: demandes.description,
+                    price: demandes.price,
                   })
                 }
                 style={styles.cardContainer}
@@ -104,10 +102,10 @@ export default function HomePage({ navigation }) {
                   // deliveredOrPending={"Pending"}
                   // number={27}
                   // color="red-400"
-                  matrecule={medication.matercule}
-                  name={medication.name}
-                  price={medication.price}
-                  place={medication.adress}
+                  matrecule={demandes.matercule}
+                  name={demandes.name}
+                  price={demandes.price}
+                  place={demandes.adress}
                   color={"p"}
                 />
               </TouchableOpacity>
@@ -117,6 +115,8 @@ export default function HomePage({ navigation }) {
           <Text>Loading loding data...</Text>
         )}
       </ScrollView>
+
+      <Text className="text-xl mt-3 ml-4"> Pending</Text>
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { FETCH_MEDICATIONS } from "../store/types ";
 
 const initialState = {
-  medications: [],
+  demandes: {},
 };
 
 const medicationReducer = (state = initialState, action) => {
@@ -9,7 +9,7 @@ const medicationReducer = (state = initialState, action) => {
     case FETCH_MEDICATIONS:
       return {
         ...state,
-        medications: action.payload,
+        demandes: action.payload.demandes,
       };
     default:
       return state;

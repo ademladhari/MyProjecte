@@ -2,7 +2,7 @@ import { getApi } from "../utils/api/api";
 
 export const data = async () => {
   try {
-    const response = await getApi.get("testing");
+    const response = await getApi.get("demand");
 
     return response.data; // Assuming you want to return the data from the response
   } catch (error) {

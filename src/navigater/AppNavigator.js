@@ -1,53 +1,44 @@
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Ionicons } from "@expo/vector-icons"; // Import Ionicons from Expo
-import { SvgUri } from "react-native-svg";
-import Auth from "../pages/Auth";
-import HomePage from "../pages/HomePage";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Image } from "react-native";
-import { DetailsScreen } from "../pages/DetailsScreen";
-import DeliveryPage from "../pages/deliveries-page";
-import profile from "../pages/profile";
-import Profile from "../pages/profile";
-import { useDispatch, useSelector } from "react-redux";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { useSelector, useDispatch } from "react-redux";
 import { checkAuthentication } from "../redux/actions/actionAuth";
-import { useEffect } from "react";
+import HomePage from "../pages/HomePage";
+import DetailsScreen from "../pages/DetailsScreen";
+import Auth from "../pages/Auth";
+import DeliveryPage from "../pages/deliveries-page";
 import NotificationsPage from "../pages/notification-page";
+import Profile from "../pages/profile";
+import { Ionicons } from "@expo/vector-icons";
+import { SvgUri } from "react-native-svg";
 
 const Stack = createStackNavigator();
-const tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 
-const AppNavigator = ({ navigation }) => {
+const AppNavigator = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(checkAuthentication());
   }, []);
-  // Set the authentication status here
-  // const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
         {!isLoggedIn ? (
-          <>
-            {/*<Stack.Screen
-              options={{ headerShown: false }}
-              name="Startup"
-              component={StartPage}
-            />*/}
-            <Stack.Screen
-              options={{ headerShown: false }}
-              name="Auth"
-              component={Auth}
-            />
-          </>
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="Auth"
+            component={Auth}
+          />
         ) : (
           <>
             <Stack.Screen
               options={{ headerShown: false }}
-              name="HomeScreen"
-              component={HomeScreen}
+              name="Main"
+              component={MainNavigator}
             />
             <Stack.Screen
               options={{ headerShown: false }}
@@ -61,24 +52,22 @@ const AppNavigator = ({ navigation }) => {
   );
 };
 
-const HomeScreen = () => (
-  <tab.Navigator>
-    <tab.Screen
+const MainNavigator = () => (
+  <Drawer.Navigator>
+    <Drawer.Screen
       name="Home"
       component={HomePage}
       options={{
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => (
+        drawerIcon: ({ color, size }) => (
           <Ionicons name="home" color={color} size={size} />
         ),
       }}
     />
-    <tab.Screen
+    <Drawer.Screen
       name="Delivery"
       component={DeliveryPage}
       options={{
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => (
+        drawerIcon: ({ color, size }) => (
           <SvgUri
             uri={require("../../assets/reshot-icon-deliveryman-WXMKFGR8LT.svg")}
             width="100%"
@@ -88,28 +77,25 @@ const HomeScreen = () => (
         ),
       }}
     />
-    <tab.Screen
+    <Drawer.Screen
       name="Notification"
       component={NotificationsPage}
       options={{
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => (
+        drawerIcon: ({ color, size }) => (
           <Ionicons name="notifications" color={color} size={size} />
         ),
       }}
     />
-    <tab.Screen
-      name="profile"
+    <Drawer.Screen
+      name="Profile"
       component={Profile}
       options={{
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => (
+        drawerIcon: ({ color, size }) => (
           <Ionicons name="person" color={color} size={size} />
         ),
       }}
     />
-    {/* Add more screens here if needed */}
-  </tab.Navigator>
+  </Drawer.Navigator>
 );
 
 export default AppNavigator;

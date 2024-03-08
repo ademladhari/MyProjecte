@@ -10,7 +10,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const DetailsScreen = ({ route, navigation }) => {
+export default function DetailsScreen({ route, navigation }) {
   const { name, description, image, price } = route.params;
   const [userData, setUserData] = useState(null);
 
@@ -24,9 +24,9 @@ export const DetailsScreen = ({ route, navigation }) => {
         console.error("Error fetching user data:", error);
       }
     };
-    fetchUserData()
-  },[])
- 
+    fetchUserData();
+  }, []);
+
   return (
     <View className="h-screen ">
       <View className="w-full h-[5%]  bg-blue-600 text-red-400"></View>
@@ -61,12 +61,14 @@ export const DetailsScreen = ({ route, navigation }) => {
       </View>
 
       <View className="h-[45%]">
-      {userData && (
-        <CustomerDetails number={userData.TelMobile} Address={userData.Governorate} />
-      )}</View>
-      <View className="h-[10%] mt-7">
-    
+        {userData && (
+          <CustomerDetails
+            number={userData.TelMobile}
+            Address={userData.Governorate}
+          />
+        )}
       </View>
+      <View className="h-[10%] mt-7"></View>
     </View>
   );
-};
+}

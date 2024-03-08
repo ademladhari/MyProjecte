@@ -1,8 +1,9 @@
 import axios from "axios";
 
 export const getApi = axios.create({
-  baseURL: "https://65df98ccff5e305f32a2a067.mockapi.io/api/test/",
-  headers: { "Content-Type": "application/json" },
+  baseURL: "http://192.168.0.4:3000/api/",
+  headers: { "Content-Type": "application/json", "x-api-key": "1111" },
+
   withCredentials: true,
 });
 export const getApiAuth = axios.create({
