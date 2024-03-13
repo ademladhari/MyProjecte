@@ -54,9 +54,10 @@ export default function Profile({ navigation }) {
           <AdressCard adress={userData.Address} region={userData.Governorate} />
         )}
       </View>
-      <View>
+      <View className="w-[90%] m-auto rounded-lg">
         <Button
           title="zae"
+          className="rounded-lg"
           onPress={() => {
             logout();
           }}

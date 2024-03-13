@@ -1,16 +1,5 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { StatusBar } from "expo-status-bar";
-import {
-  Button,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, View } from "react-native";
 import Login from "../components/Login";
-import { createStackNavigator } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
 
 export default function Auth({ navigation }) {
   // Initialize navigation using useNavigation hook

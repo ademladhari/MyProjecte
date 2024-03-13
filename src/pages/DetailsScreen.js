@@ -9,11 +9,16 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  getStatusAddress,
+  getStatusAddressForMap,
+  getStatusLabName,
+} from "../utils/api/functions";
 
 export default function DetailsScreen({ route, navigation }) {
-  const { name, description, image, price } = route.params;
+  const { demande } = route.params;
   const [userData, setUserData] = useState(null);
-
+  console.log("hehehhhhhhhhh", demande);
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -33,7 +38,7 @@ export default function DetailsScreen({ route, navigation }) {
       <View className=" flex flex-row mb-4 ">
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("HomeScreen");
+            navigation.navigate("Home");
           }}
         >
           <Ionicons
@@ -46,28 +51,26 @@ export default function DetailsScreen({ route, navigation }) {
 
         <Text className="text-2xl h-[100%]  ml-20 mt-3">Delivery Details</Text>
       </View>
-      <View>
-        <DeliveryDetailsCard
-          img={require("../../assets/pendinggg.png")}
-          deliveredOrPending={"Pending"}
-          number={27}
-          color="red-400"
-        ></DeliveryDetailsCard>
-      </View>
-      <View className="h-[13%]">
-        <Text className="text-3xl text-blue-700 text-center border-b-[2.2px] w-[60%] m-auto  border-[blue]   mt-8">
-          Medication Details
-        </Text>
-      </View>
-
-      <View className="h-[45%]">
+      <View className="h-[35%]">
         {userData && (
           <CustomerDetails
-            number={userData.TelMobile}
-            Address={userData.Governorate}
+            number={demande.DepartureTelMobile}
+            Address={getStatusAddressForMap(demande)}
+            name={getStatusLabName(demande)}
+            statusdate={demande.Statusdate}
           />
         )}
       </View>
+
+      <View className="h-[13%]">
+        <Text className="text-3xl text-blue-700 text-center border-b-[2.2px] w-[60%] m-auto  border-[blue]   mt-8">
+          Demande Details
+        </Text>
+      </View>
+      <View>
+        <DeliveryDetailsCard demande={demande}></DeliveryDetailsCard>
+      </View>
+
       <View className="h-[10%] mt-7"></View>
     </View>
   );

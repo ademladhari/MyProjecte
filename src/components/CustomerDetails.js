@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import {
   Image,
@@ -10,7 +11,7 @@ import {
 import openMap from "react-native-open-maps";
 
 const CustomerDetails = (prop) => {
-  const { Address, number, deliveredOrPending, color } = prop;
+  const { Address, number, deliveredOrPending, color, name } = prop;
 
   function _goToYosemite(Address) {
     openMap({ query: Address });
@@ -22,7 +23,7 @@ const CustomerDetails = (prop) => {
         backgroundColor: color,
         height: height,
         width: width,
-        marginLeft: 30,
+        marginLeft: 20,
       }}
     />
   );
@@ -33,44 +34,50 @@ const CustomerDetails = (prop) => {
 
   return (
     <View className=" w-[90%] h-[100%] flex flex-col bg-[#FFFFFE] ml-5 rounded-md  ">
-      <View className="h-[33%] w-[100%] flex flex-row">
-        <View className="flex w-[80%] flex-col p-6  ">
+      <View className="h-[30%] w-[100%] flex flex-row">
+        <View className="flex w-[85%] flex-col p-5  ">
           <Text className="text-lg text-[#acacac]">Full Name</Text>
-          <Text className="text-xl mt-2 ">Name</Text>
+          <Text className="text-xl mt-1 ">{name}</Text>
         </View>
-
-        <Image
-          className=" w-[20%] h-[45%]  mt-3 rounded-full"
-          source={require("../../assets/delivereddd.png")}
+        <MaterialCommunityIcons
+          name="account-circle-outline"
+          size={35}
+          color="green"
+          style={{ marginTop: 25 }}
         />
       </View>
       <Line color="black" height={1} width="80%" />
 
-      <View className="h-[33%] w-[100%] flex flex-row">
-        <View className="flex w-[80%] flex-col p-6  ">
+      <View className="h-[30%] w-[100%] flex flex-row">
+        <View className="flex w-[85%]  flex-col p-5  ">
           <Text className="text-lg text-[#acacac]">Phone Number</Text>
           <TouchableOpacity onPress={handleCallPress}>
-            <Text className="text-xl mt-2">{number}</Text>
+            <Text className="text-xl mt-1">{number}</Text>
           </TouchableOpacity>
         </View>
-        <Image
-          className=" w-[17%] h-[51%] pb-3  mt-5  rounded-full"
-          source={require("../../assets/phone-call.png")}
+        <MaterialCommunityIcons
+          name="card-account-phone"
+          style={{ marginTop: 25 }}
+          size={35}
+          color="green"
         />
       </View>
       <Line color="black" height={1} width="80%" />
-      <View className="h-[30%] w-[100%] flex flex-row">
-        <View className="flex w-[78%] flex-col p-6  ">
+      <View className="h-[30%] w-[100%] mb-1 flex flex-row">
+        <View className="flex w-[83%] flex-col p-5  ">
           <Text className="text-lg text-[#acacac]">Delivery Address</Text>
           <TouchableOpacity onPress={() => _goToYosemite(Address)}>
-            <Text className="text-xl mt-2 ">{Address}</Text>
+            <Text className="text-xl mt-1 ">{Address}</Text>
           </TouchableOpacity>
         </View>
-        <Image
-          className=" w-[22%] h-[60%] mt-5 mr rounded-full"
-          source={require("../../assets/location5.jpg")}
+        <MaterialCommunityIcons
+          name="map-marker-account-outline"
+          style={{ marginTop: 25 }}
+          size={45}
+          color="green"
         />
       </View>
+      <Line color="black" height={1} width="80%" />
     </View>
   );
 };

@@ -2,7 +2,9 @@ import { getApi } from "../utils/api/api";
 
 export const data = async () => {
   try {
-    const response = await getApi.get("demand");
+    const response = await getApi.get(
+      "demand?page=1&sort=asc&includeAssigned=false"
+    );
 
     return response.data; // Assuming you want to return the data from the response
   } catch (error) {

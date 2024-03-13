@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { data } from "../services/ServiceData";
 import { fetchMedications } from "../redux/actions/actiondata";
+import { getStatusAddress, getStatusLabName } from "../utils/api/functions";
 
 export default function HomePage({ navigation }) {
   const currentDate = new Date();
@@ -32,14 +33,13 @@ export default function HomePage({ navigation }) {
   const dispatch = useDispatch();
   const demandes = useSelector((state) => state.demandes.demandes);
   console.log("here", demandes);
-  const [filteredMedications, setFilteredMedications] = useState(null);
-  console.log("home", demandes);
+  const [filteredMedications, setFilteredMedications] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await dispatch(fetchMedications()); // This line should dispatch the action
+        dispatch(fetchMedications()); // This line should dispatch the action
         // Make sure you are getting the data from the action
-
         console.log("Action dispatched successfully");
       } catch (error) {
         console.error("Error dispatching fetchMedications:", error);
@@ -50,7 +50,7 @@ export default function HomePage({ navigation }) {
 
   useEffect(() => {
     // Filter demandes based on the search query and selected category
-    if (demandes && demandes) {
+    if (demandes) {
       let filteredMeds = demandes;
 
       setFilteredMedications(filteredMeds);
@@ -62,7 +62,6 @@ export default function HomePage({ navigation }) {
   return (
     <>
       <View className="h-[15%]">
-        <View className="w-full h-[40%] bg-blue-600 text-red-400"></View>
         <Text className="text-2xl ml-4">Hi,!</Text>
         <Text className="text-base ml-4">{formattedDate}</Text>
       </View>
@@ -81,33 +80,32 @@ export default function HomePage({ navigation }) {
         />
       </View>
       <ScrollView className="h-[20%] ">
-        {filteredMedications !== null ? (
-          filteredMedications.map((demandes, index) => (
+        <Text className="text-xl mt-3 ml-4"> Pending</Text>
+
+        {filteredMedications !== undefined && filteredMedications.length > 0 ? (
+          filteredMedications.map((demande, index) => (
             <View className="h-[80px] my-3">
               <TouchableOpacity
                 key={index}
                 onPress={() =>
                   navigation.navigate("DetailsScreen", {
-                    name: demandes.requestName,
-                    image: require("../../assets/pendinggg.png"),
-                    description: demandes.description,
-                    price: demandes.price,
+                    demande: demande,
                   })
                 }
                 style={styles.cardContainer}
               >
-                <Carddelivery
-                  key={index}
-                  // img={require("../../assets/pendinggg.png")}
-                  // deliveredOrPending={"Pending"}
-                  // number={27}
-                  // color="red-400"
-                  matrecule={demandes.matercule}
-                  name={demandes.name}
-                  price={demandes.price}
-                  place={demandes.adress}
-                  color={"p"}
-                />
+                {
+                  <Carddelivery
+                    key={index}
+                    matrecule={demande.ArrivalLabName}
+                    name={getStatusLabName(demande)}
+                    price={demande.price}
+                    place={getStatusAddress(demande)}
+                    Governorate={demande.Governorate}
+                    DepartureGovernorate={demande.DepartureGovernorate}
+                    color={"p"}
+                  />
+                }
               </TouchableOpacity>
             </View>
           ))
@@ -115,8 +113,6 @@ export default function HomePage({ navigation }) {
           <Text>Loading loding data...</Text>
         )}
       </ScrollView>
-
-      <Text className="text-xl mt-3 ml-4"> Pending</Text>
     </>
   );
 }

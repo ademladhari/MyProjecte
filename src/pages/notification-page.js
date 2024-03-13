@@ -13,7 +13,6 @@ export default function NotificationsPage({ navigation }) {
 
   return (
     <View>
-      <View className="w-full h-[5%] bg-blue-600 text-red-400"></View>
       <View>
         <Text className="text-3xl ml-2 mt-2">Notification</Text>
       </View>

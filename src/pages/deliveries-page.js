@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { data } from "../services/ServiceData";
 import { fetchMedications } from "../redux/actions/actiondata";
+import { getStatusAddress, getStatusLabName } from "../utils/api/functions";
 
 export default function DeliveryPage({ navigation }) {
   const currentDate = new Date();
@@ -29,16 +30,13 @@ export default function DeliveryPage({ navigation }) {
   });
 
   const dispatch = useDispatch();
-  const medications = useSelector((state) => state.medications);
-
-  const [filteredMedications, setFilteredMedications] = useState(null);
+  const demandes = useSelector((state) => state.demandes.demandes);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await dispatch(fetchMedications()); // This line should dispatch the action
+        dispatch(fetchMedications()); // This line should dispatch the action
         // Make sure you are getting the data from the action
-
         console.log("Action dispatched successfully");
       } catch (error) {
         console.error("Error dispatching fetchMedications:", error);
@@ -47,56 +45,36 @@ export default function DeliveryPage({ navigation }) {
     fetchData();
   }, [dispatch]);
 
-  useEffect(() => {
-    // Filter medications based on the search query and selected category
-    if (medications && medications["medications"]) {
-      let filteredMeds = medications["medications"];
-
-      setFilteredMedications(filteredMeds);
-    } else {
-      setFilteredMedications(null);
-    }
-  }, [medications]);
-
   return (
     <>
-      <View className="h-[10%]">
-        <View className="w-full h-[60%] bg-blue-600 text-red-400"></View>
-      </View>
-      <Text className="text-3xl  text-center"> Deliveries</Text>
       <ScrollView className="h-[20%] ">
-        {filteredMedications !== null ? (
-          filteredMedications.map((medication, index) => (
+        {demandes !== null && demandes.length > 0 ? (
+          demandes.map((demande, index) => (
             <View className="h-[80px] my-3">
               <TouchableOpacity
                 key={index}
                 onPress={() =>
                   navigation.navigate("DetailsScreen", {
-                    name: medication.name,
-                    image: require("../../assets/pendinggg.png"),
-                    description: medication.description,
-                    price: medication.price,
+                    demande: demande,
                   })
                 }
                 style={styles.cardContainer}
               >
                 <Carddelivery
                   key={index}
-                  // img={require("../../assets/pendinggg.png")}
-                  // deliveredOrPending={"Pending"}
-                  // number={27}
-                  // color="red-400"
-                  matrecule={medication.matercule}
-                  name={medication.name}
-                  price={medication.price}
-                  place={medication.adress}
+                  matrecule={demande.ArrivalLabName}
+                  name={getStatusLabName(demande)}
+                  price={demande.price}
+                  place={getStatusAddress(demande)}
+                  Governorate={demande.Governorate}
+                  DepartureGovernorate={demande.DepartureGovernorate}
                   color={"p"}
                 />
               </TouchableOpacity>
             </View>
           ))
         ) : (
-          <Text>Loading loding data...</Text>
+          <Text>Loading dazdzad...</Text>
         )}
       </ScrollView>
     </>

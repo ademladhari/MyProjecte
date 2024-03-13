@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Image, Text, View, Animated } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 const Carddelivery = (prop) => {
-  const { matrecule, name, place, price, color } = prop;
+  const { matrecule, name, place, price, color, address } = prop;
   const Circle = ({ color = "F6995C", size = 40 }) => (
     <View
       style={{
@@ -15,6 +15,7 @@ const Carddelivery = (prop) => {
       }}
     />
   );
+  console.log(address);
   const CircleOpacity = ({ color = "#F6995C", size = 40 }) => {
     const scaleValue = useRef(new Animated.Value(1)).current;
 
@@ -69,15 +70,16 @@ const Carddelivery = (prop) => {
           <CircleOpacity color="red" size={30} />
         </View>
         <View className="w-[50%]">
-          <Text className="  text-xl mt-5 text-Bold text-blue-500 ">
-            {matrecule}
-          </Text>
+          <Text className=" text-lg  text-Bold font-normal ">{name}</Text>
+          <View className="w-[100%] h-[70%] pt-2  flex flex-row">
+            <MaterialIcons
+              name="place"
+              className="mt-9"
+              size={23}
+              color="green"
+            />
 
-          <Text className=" text-lg mt-2 text-Bold font-normal ">{name}</Text>
-          <View className="w-[100%] h-[20%]  flex flex-row">
-            <MaterialIcons name="place" size={23} color="green" />
-
-            <Text className=" w-28 h-[100%] mt-1 text-xm  text-Bold font-normal ">
+            <Text className=" w-28 h-[100%]  text-xm  text-Bold font-normal ">
               {place}
             </Text>
           </View>
