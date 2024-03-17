@@ -18,6 +18,8 @@ import { useNavigation } from "@react-navigation/native";
 import { data } from "../services/ServiceData";
 import { fetchMedications } from "../redux/actions/actiondata";
 import { getStatusAddress, getStatusLabName } from "../utils/api/functions";
+import { fetchUserData } from "../redux/actions/actionUserData";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomePage({ navigation }) {
   const currentDate = new Date();
@@ -32,9 +34,22 @@ export default function HomePage({ navigation }) {
 
   const dispatch = useDispatch();
   const demandes = useSelector((state) => state.demandes.demandes);
-  console.log("here", demandes);
   const [filteredMedications, setFilteredMedications] = useState([]);
+  const [userID, setUserID] = useState(null);
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userJson = await AsyncStorage.getItem("userData");
+        const user = JSON.parse(userJson);
+        setUserID(user.UserID);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -52,31 +67,51 @@ export default function HomePage({ navigation }) {
     // Filter demandes based on the search query and selected category
     if (demandes) {
       let filteredMeds = demandes;
-
       setFilteredMedications(filteredMeds);
     } else {
       setFilteredMedications(null);
     }
   }, [demandes]);
-
+  function countDeliveredStatus(demandes) {
+    let deliveredCount = 0;
+    demandes.forEach((demande) => {
+      if (demande.Status === "livre") {
+        deliveredCount++;
+      }
+    });
+    return deliveredCount;
+  }
+  function countOtherStatus(demandes) {
+    let otherCount = 0;
+    demandes.forEach((demande) => {
+      if (demande.Status !== "livre" && demande.Status !== "en cours") {
+        otherCount++;
+      }
+    });
+    return otherCount;
+  }
   return (
     <>
-      <View className="h-[15%]">
+      <View className="h-[12%]">
         <Text className="text-2xl ml-4">Hi,!</Text>
         <Text className="text-base ml-4">{formattedDate}</Text>
       </View>
-      <View className="flex w-[full] h-[23%] flex-row rounded-xl">
+      <View className="flex w-[full] h-[18%]  flex-row rounded-xl">
         <CardSomething
           img={require("../../assets/delivereddd.png")}
           deliveredOrPending={"Delivered"}
-          number={27}
-          color="green-700"
+          number={countDeliveredStatus(demandes)}
+          color="green"
+          colorText={"green-600"}
+          name={"truck-check"}
         />
         <CardSomething
           img={require("../../assets/pendinggg.png")}
           deliveredOrPending={"Pending"}
-          number={27}
-          color="red-400"
+          number={countOtherStatus(demandes)}
+          color="red"
+          colorText="text-[red]"
+          name={"truck-fast"}
         />
       </View>
       <ScrollView className="h-[20%] ">
@@ -84,30 +119,34 @@ export default function HomePage({ navigation }) {
 
         {filteredMedications !== undefined && filteredMedications.length > 0 ? (
           filteredMedications.map((demande, index) => (
-            <View className="h-[80px] my-3">
-              <TouchableOpacity
-                key={index}
-                onPress={() =>
-                  navigation.navigate("DetailsScreen", {
-                    demande: demande,
-                  })
-                }
-                style={styles.cardContainer}
-              >
-                {
-                  <Carddelivery
+            <>
+              {demande.agentUserID === userID && demande.Status !== "livre" && (
+                <View className="h-[80px] my-3">
+                  <TouchableOpacity
                     key={index}
-                    matrecule={demande.ArrivalLabName}
-                    name={getStatusLabName(demande)}
-                    price={demande.price}
-                    place={getStatusAddress(demande)}
-                    Governorate={demande.Governorate}
-                    DepartureGovernorate={demande.DepartureGovernorate}
-                    color={"p"}
-                  />
-                }
-              </TouchableOpacity>
-            </View>
+                    onPress={() =>
+                      navigation.navigate("DetailsScreen", {
+                        demande: demande,
+                      })
+                    }
+                    style={styles.cardContainer}
+                  >
+                    {console.log(demande.Status)}
+
+                    <Carddelivery
+                      key={index}
+                      matrecule={demande.ArrivalLabName}
+                      name={getStatusLabName(demande)}
+                      price={demande.price}
+                      place={getStatusAddress(demande)}
+                      Governorate={demande.Governorate}
+                      DepartureGovernorate={demande.DepartureGovernorate}
+                      color={"p"}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+            </>
           ))
         ) : (
           <Text>Loading loding data...</Text>

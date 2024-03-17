@@ -26,15 +26,14 @@ export default function Profile({ navigation }) {
   const dispatch = useDispatch();
   function logout() {
     dispatch(logoutUser());
-    console.log("here");
   }
 
   // Empty dependency array ensures the effect runs only once when the component mounts
 
   return (
     <View>
-      <View className="mt-12 text-lg font-bold mb-14 ">
-        <Text className="text-center font-bold">
+      <View className="mt-5  font-bold mb-6 ">
+        <Text className=" ml-6 text-lg font-bold">
           Welcome, {userData && userData.Email}
         </Text>
       </View>
@@ -53,17 +52,6 @@ export default function Profile({ navigation }) {
         {userData && (
           <AdressCard adress={userData.Address} region={userData.Governorate} />
         )}
-      </View>
-      <View className="w-[90%] m-auto rounded-lg">
-        <Button
-          title="zae"
-          className="rounded-lg"
-          onPress={() => {
-            logout();
-          }}
-        >
-          <Text>aze</Text>
-        </Button>
       </View>
     </View>
   );

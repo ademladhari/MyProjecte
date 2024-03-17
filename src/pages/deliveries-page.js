@@ -49,30 +49,33 @@ export default function DeliveryPage({ navigation }) {
     <>
       <ScrollView className="h-[20%] ">
         {demandes !== null && demandes.length > 0 ? (
-          demandes.map((demande, index) => (
-            <View className="h-[80px] my-3">
-              <TouchableOpacity
-                key={index}
-                onPress={() =>
-                  navigation.navigate("DetailsScreen", {
-                    demande: demande,
-                  })
-                }
-                style={styles.cardContainer}
-              >
-                <Carddelivery
-                  key={index}
-                  matrecule={demande.ArrivalLabName}
-                  name={getStatusLabName(demande)}
-                  price={demande.price}
-                  place={getStatusAddress(demande)}
-                  Governorate={demande.Governorate}
-                  DepartureGovernorate={demande.DepartureGovernorate}
-                  color={"p"}
-                />
-              </TouchableOpacity>
-            </View>
-          ))
+          demandes.map(
+            (demande, index) =>
+              demande.agentUserID === null && (
+                <View className="h-[80px] my-3">
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() =>
+                      navigation.navigate("DetailsScreen", {
+                        demande: demande,
+                      })
+                    }
+                    style={styles.cardContainer}
+                  >
+                    <Carddelivery
+                      key={index}
+                      matrecule={demande.ArrivalLabName}
+                      name={getStatusLabName(demande)}
+                      price={demande.price}
+                      place={getStatusAddress(demande)}
+                      Governorate={demande.Governorate}
+                      DepartureGovernorate={demande.DepartureGovernorate}
+                      color={"p"}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )
+          )
         ) : (
           <Text>Loading dazdzad...</Text>
         )}

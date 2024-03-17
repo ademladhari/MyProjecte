@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, Button } from "react-native";
 import { RouteProp } from "@react-navigation/native";
 import Carddelivery from "../components/Carddelivery";
 import DeliveryDetailsCard from "../components/DeliveryDetailsCard";
@@ -14,11 +14,16 @@ import {
   getStatusAddressForMap,
   getStatusLabName,
 } from "../utils/api/functions";
+import { patchData } from "../redux/actions/ActionUpdate";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMedications } from "../redux/actions/actiondata";
 
 export default function DetailsScreen({ route, navigation }) {
+  const dispatch = useDispatch();
+  const demandes = useSelector((state) => state.demandes.demandes);
   const { demande } = route.params;
+  const [updateDemande, setdUpdatedemande] = useState(demande);
   const [userData, setUserData] = useState(null);
-  console.log("hehehhhhhhhhh", demande);
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -29,8 +34,61 @@ export default function DetailsScreen({ route, navigation }) {
         console.error("Error fetching user data:", error);
       }
     };
+
     fetchUserData();
   }, []);
+
+  const handlePatch = async () => {
+    const demandId = demande.DemandID;
+    let updatedStatus = "";
+
+    // Determine the next status based on the current status
+    switch (updateDemande.Status) {
+      case "en cours":
+        updatedStatus = "affecté";
+        break;
+      case "affecté":
+        updatedStatus = "collecté";
+        break;
+      case "collecté":
+        updatedStatus = "livre";
+        break;
+      case "livre":
+        updatedStatus = "livre";
+        break;
+      default:
+        updatedStatus = "en cours";
+        break;
+    }
+
+    // Update the demande object with the new status and other properties
+    setdUpdatedemande((prevDemande) => ({
+      ...prevDemande,
+      Status: updatedStatus,
+      Address: getStatusAddressForMap(prevDemande),
+      name: getStatusLabName(prevDemande),
+    }));
+    // Dispatch the action to update the data
+    if (updateDemande.Status === "en cours") {
+      dispatch(
+        patchData(demandId, {
+          Status: updatedStatus,
+          agentUserID: userData.UserID,
+        })
+      );
+    } else {
+      dispatch(
+        patchData(demandId, {
+          Status: updatedStatus,
+        })
+      );
+    }
+    // Add a short delay before fetching the data again
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Refetch data after patching
+    dispatch(fetchMedications());
+  };
 
   return (
     <View className="h-screen ">
@@ -52,12 +110,13 @@ export default function DetailsScreen({ route, navigation }) {
         <Text className="text-2xl h-[100%]  ml-20 mt-3">Delivery Details</Text>
       </View>
       <View className="h-[35%]">
+        {console.log(getStatusLabName(demande))}
         {userData && (
           <CustomerDetails
-            number={demande.DepartureTelMobile}
-            Address={getStatusAddressForMap(demande)}
-            name={getStatusLabName(demande)}
-            statusdate={demande.Statusdate}
+            number={updateDemande.DepartureTelMobile}
+            Address={getStatusAddressForMap(updateDemande)}
+            name={getStatusLabName(updateDemande)}
+            statusdate={updateDemande.Statusdate}
           />
         )}
       </View>
@@ -68,10 +127,18 @@ export default function DetailsScreen({ route, navigation }) {
         </Text>
       </View>
       <View>
-        <DeliveryDetailsCard demande={demande}></DeliveryDetailsCard>
+        <DeliveryDetailsCard demande={updateDemande}></DeliveryDetailsCard>
       </View>
 
-      <View className="h-[10%] mt-7"></View>
+      <View className="h-[10%] w-[90%] m-auto mt-7">
+        <Button
+          title={updateDemande.Status}
+          className="rounded-lg "
+          onPress={() => {
+            handlePatch();
+          }}
+        ></Button>
+      </View>
     </View>
   );
 }

@@ -37,7 +37,7 @@ const CustomerDetails = (prop) => {
       <View className="h-[30%] w-[100%] flex flex-row">
         <View className="flex w-[85%] flex-col p-5  ">
           <Text className="text-lg text-[#acacac]">Full Name</Text>
-          <Text className="text-xl mt-1 ">{name}</Text>
+          <Text className="text-lg mt-1 ">{name}</Text>
         </View>
         <MaterialCommunityIcons
           name="account-circle-outline"
@@ -52,7 +52,7 @@ const CustomerDetails = (prop) => {
         <View className="flex w-[85%]  flex-col p-5  ">
           <Text className="text-lg text-[#acacac]">Phone Number</Text>
           <TouchableOpacity onPress={handleCallPress}>
-            <Text className="text-xl mt-1">{number}</Text>
+            <Text className=" text-base mt-2">{number}</Text>
           </TouchableOpacity>
         </View>
         <MaterialCommunityIcons
@@ -67,7 +67,9 @@ const CustomerDetails = (prop) => {
         <View className="flex w-[83%] flex-col p-5  ">
           <Text className="text-lg text-[#acacac]">Delivery Address</Text>
           <TouchableOpacity onPress={() => _goToYosemite(Address)}>
-            <Text className="text-xl mt-1 ">{Address}</Text>
+            <Text className="text-sm  w-[80%] whitespace-nowrap overflow-x-scroll h-[40px] ">
+              {Address}
+            </Text>
           </TouchableOpacity>
         </View>
         <MaterialCommunityIcons

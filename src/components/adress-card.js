@@ -13,17 +13,17 @@ const AdressCard = (prop) => {
     />
   );
   return (
-    <View className=" w-[90%] h-[220px] bg-[#FFFFFE] md:w-[50%] mt-8 mb-4  ml-5 rounded-md  ">
+    <View className=" w-[90%] h-[200px] bg-[#FFFFFE] md:w-[50%] mt-5 mb-12  ml-5 rounded-md  ">
       <View className="">
         <View className="w-full">
-          <Text className=" mt-5  mb-4 ml-6  text-xl text-Bold ">Adress</Text>
+          <Text className=" mt-5  mb-2 ml-6  text-xl text-Bold ">Adress</Text>
 
           <Line color="black" height={1} width="90%" />
-          <Text className=" mt-3 ml-6 text-base">Adress</Text>
+          <Text className=" mt-2 ml-6 text-base">Adress</Text>
           <Text className=" mt-1 ml-6  text-base font-thin ">{adress}</Text>
         </View>
         <View className="">
-          <Text className=" mt-3 ml-6 text-base  ">Region </Text>
+          <Text className=" mt-2 ml-6 text-base  ">Region </Text>
           <Text className=" mt-1 ml-6  font-thin ">{region}</Text>
         </View>
       </View>

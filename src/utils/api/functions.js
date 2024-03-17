@@ -1,6 +1,6 @@
 export const getStatusAddressForMap = (demande) => {
   switch (demande.Status) {
-    case "en cours":
+    case "collecté":
       return (
         demande.ArrivalGovernorate +
         "," +
@@ -8,7 +8,7 @@ export const getStatusAddressForMap = (demande) => {
         "," +
         demande.ArrivalAddress
       );
-    case "affected":
+    case "affecté":
       return (
         demande.DepartureGovernorate +
         "," +
@@ -16,8 +16,22 @@ export const getStatusAddressForMap = (demande) => {
         "," +
         demande.DepartureAddress
       );
-    case "delivered":
-      return " delivered";
+    case "en cours":
+      return (
+        demande.DepartureGovernorate +
+        "," +
+        demande.DepartureLocation +
+        "," +
+        demande.DepartureAddress
+      );
+    case "livre":
+      return (
+        demande.ArrivalGovernorate +
+        "," +
+        demande.ArrivalLocation +
+        "," +
+        demande.ArrivalAddress
+      );
     case "canceled":
       return "Address for canceled";
     default:
@@ -27,11 +41,13 @@ export const getStatusAddressForMap = (demande) => {
 export const getStatusAddress = (demande) => {
   switch (demande.Status) {
     case "en cours":
-      return demande.ArrivalGovernorate + "," + demande.ArrivalLocation;
-    case "affected":
       return demande.DepartureGovernorate + "," + demande.DepartureLocation;
-    case "delivered":
-      return " delivered";
+    case "affecté":
+      return demande.DepartureGovernorate + "," + demande.DepartureLocation;
+    case "collecté":
+      return demande.ArrivalGovernorate + "," + demande.ArrivalLocation;
+    case "livre":
+      return demande.ArrivalGovernorate + "," + demande.ArrivalLocation;
     case "canceled":
       return "Address for canceled";
     default:
@@ -41,11 +57,13 @@ export const getStatusAddress = (demande) => {
 export const getStatusLabName = (demande) => {
   switch (demande.Status) {
     case "en cours":
-      return demande.ArrivalLabName;
-    case "affected":
       return demande.DepartureLabName;
-    case "delivered":
-      return " delivered";
+    case "affecté":
+      return demande.DepartureLabName;
+    case "collecté":
+      return demande.ArrivalLabName;
+    case "livre":
+      return demande.ArrivalLabName;
     case "canceled":
       return "canceled";
     default:
