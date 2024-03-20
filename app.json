@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "MyProjecte",
+    "name": "myprojecte",
     "slug": "MyProjecte",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -11,14 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "plugins": [
-      [
-        "expo-location",
-        {
-          "locationAlwaysAndWhenInUsePermission": "Allow $(MyProjecte) to use your location."
-        }
-      ]
-    ],
+ 
     "assetBundlePatterns": [
       "**/*"
     ],

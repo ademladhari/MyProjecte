@@ -11,7 +11,7 @@ import {
 import openMap from "react-native-open-maps";
 
 const CustomerDetails = (prop) => {
-  const { Address, number, deliveredOrPending, color, name } = prop;
+  const { Address, number, deliveredOrPending, color, name, qrcode } = prop;
 
   function _goToYosemite(Address) {
     openMap({ query: Address });
@@ -27,7 +27,7 @@ const CustomerDetails = (prop) => {
       }}
     />
   );
-
+  console.log("qrcode", qrcode);
   const handleCallPress = () => {
     Linking.openURL(`tel:${number}`);
   };

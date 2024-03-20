@@ -3,6 +3,7 @@ import { login } from "../../services/AuthLogin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native"; // Import Alert from react-native
 import { getUserData } from "./ActionUser";
+import * as Device from "expo-device";
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
@@ -86,4 +87,24 @@ const showAlert = (message) => {
     [{ text: "OK", onPress: () => console.log("OK Pressed") }],
     { cancelable: false }
   );
+};
+const storePushToken = async (userData) => {
+  if (!Device.isDevice) {
+    return;
+  }
+  const token = (
+    await Notifications.getExpoPushTokenAsync({
+      projectId: "9675060f-ce94-49c2-af77-09e9b5674ec5",
+    })
+  ).data;
+  const tokenData = userData.pushTokens || {};
+  const tokenArray = Object.values(tokenData);
+  if (tokenArray.includes(token)) {
+    return;
+  }
+  tokenArray.push(token);
+  for (let i = 0; i < tokenArray.length; i++) {
+    const tok = tokenArray[i];
+    tokenData[i] = tok;
+  }
 };

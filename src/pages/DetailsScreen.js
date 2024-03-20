@@ -117,6 +117,7 @@ export default function DetailsScreen({ route, navigation }) {
             Address={getStatusAddressForMap(updateDemande)}
             name={getStatusLabName(updateDemande)}
             statusdate={updateDemande.Statusdate}
+            qrcode={updateDemande.codeQr}
           />
         )}
       </View>

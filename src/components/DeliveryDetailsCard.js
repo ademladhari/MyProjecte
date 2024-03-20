@@ -3,6 +3,7 @@ import { Image, Text, View } from "react-native";
 
 const DeliveryDetailsCard = (prop) => {
   const { demande } = prop;
+
   return (
     <View className=" w-[90%] h-[170px] bg-[#FFFFFE] md:w-[50%] mt-3  ml-5 rounded-md  ">
       <View className="flex flex-row ">
@@ -14,9 +15,10 @@ const DeliveryDetailsCard = (prop) => {
             {demande.requestName}
           </Text>
           <Text className="   font-normal ">{demande.Statusdate}</Text>
-          <Text className=" text-lg mt-5 text-Bold font-normal ">
-            {demande.codeQr}
-          </Text>
+
+          {demande.codeQr && (
+            <View style={{ alignItems: "center", marginTop: 10 }}></View>
+          )}
         </View>
         <View className="w-[25%]">
           <View className="flex flex-col">

@@ -73,22 +73,21 @@ export default function HomePage({ navigation }) {
     }
   }, [demandes]);
   function countDeliveredStatus(demandes) {
-    let deliveredCount = 0;
-    demandes.forEach((demande) => {
-      if (demande.Status === "livre") {
-        deliveredCount++;
-      }
-    });
-    return deliveredCount;
+    if (!demandes || !Array.isArray(demandes)) return 0;
+
+    return demandes.reduce((count, demande) => {
+      return demande.Status === "livre" ? count + 1 : count;
+    }, 0);
   }
+
   function countOtherStatus(demandes) {
-    let otherCount = 0;
-    demandes.forEach((demande) => {
-      if (demande.Status !== "livre" && demande.Status !== "en cours") {
-        otherCount++;
-      }
-    });
-    return otherCount;
+    if (!demandes || !Array.isArray(demandes)) return 0;
+
+    return demandes.reduce((count, demande) => {
+      return demande.Status !== "livre" && demande.Status !== "en cours"
+        ? count + 1
+        : count;
+    }, 0);
   }
   return (
     <>
@@ -105,6 +104,12 @@ export default function HomePage({ navigation }) {
           colorText={"green-600"}
           name={"truck-check"}
         />
+        <Image
+          source={{
+            uri: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAAOYSURBVO3BMY7jSAAEwcyG/v/lOhlrlEWAEDW7c6gI88bMH4eZcpgph5lymCmHmXKYKYeZcpgph5lymCmHmXKYKYeZcpgph5ny4kMqPykJTaUloal8UxKuqPykJHziMFMOM+UwU148LAlPUvmbknBFpSXhShKepPKkw0w5zJTDTHnxZSp3JOGOJDSVK0loKi0JP0nljiR802GmHGbKYaa8+OVUWhKaypUkXFG5koT/k8NMOcyUw0x58csloal8UxKaSkvCb3aYKYeZcpgpL74sCX9TEprKHUloKk9Kwr/kMFMOM+UwU148TOUnqbQkNJWWhKbSktBUWhKayh0q/7LDTDnMlMNMMW/8YipXktBUWhLuULmShN/sMFMOM+UwU158SKUloalcSUJTuSMJTaWptCQ0lStJ+IRKS8IVlZaEpnIlCZ84zJTDTDnMFPPGB1RaEu5QuZKEpnJHEppKS0JTuSMJd6i0JDSVK0n4psNMOcyUw0x58TCVloSm0pLQVJrKlSQ0lStJuCMJT0pCU2lJ+JsOM+UwUw4zxbzxIJUrSfiESktCU2lJaCotCZ9QuZKEpvKkJDzpMFMOM+UwU8wbD1L5piQ8SaUloam0JFxRuZKEpvKkJHziMFMOM+UwU148LAlXVO5IwhWVn6TyCZU7ktBUvukwUw4z5TBTzBsPUmlJaCqfSMIVlTuS0FRaEj6h0pJwReWOJDzpMFMOM+UwU158SKUloam0JDSVK0loKnckoalcSUJTuSMJV1RaEloS7lBpSfjEYaYcZsphppg3/mEqLQlPUmlJaCotCU3lSUloKnck4ROHmXKYKYeZ8uIfl4QrKi0JTaUloSXhSUm4Q+VKEq6oPOkwUw4z5TBTXnxI5Scl4ZtUnqTSknBFpSWhqXzTYaYcZsphprx4WBKepHKHSktCU2lJuEPljiQ8KQlN5UmHmXKYKYeZ8uLLVO5Iwh1JaCpXkvCJJDSVpvKJJFxR+abDTDnMlMNMefHLqTwpCVdUWhKaypUkNJU7ktBUnnSYKYeZcpgpL/5nktBUWhLuUGlJaCp3qFxRaUloKi0JTzrMlMNMOcyUF1+WhG9KQlO5ovKkJDSVloSm0pLQVJpKS8I3HWbKYaYcZsqLh6n8JJUrSWgqLQnfpNKS0FTuULmShE8cZsphphxminlj5o/DTDnMlMNMOcyUw0w5zJTDTDnMlMNMOcyUw0w5zJTDTDnMlMNM+Q9KQZUffwDbdwAAAABJRU5ErkJggg==",
+          }}
+          style={{ width: 10, height: 10 }}
+        />
         <CardSomething
           img={require("../../assets/pendinggg.png")}
           deliveredOrPending={"Pending"}
@@ -120,6 +125,7 @@ export default function HomePage({ navigation }) {
         {filteredMedications !== undefined && filteredMedications.length > 0 ? (
           filteredMedications.map((demande, index) => (
             <>
+              {console.log("demande", demande)}
               {demande.agentUserID === userID && demande.Status !== "livre" && (
                 <View className="h-[80px] my-3">
                   <TouchableOpacity
