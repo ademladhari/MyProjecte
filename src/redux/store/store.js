@@ -3,6 +3,7 @@ import authReducer from "../reducers/reducerauth2";
 import medicationReducer from "../reducers/ReducerData";
 import patchReducer from "../reducers/UpdateDemande";
 import userDataReducer from "../reducers/reducerUserData";
+import NotificationReducer from "../reducers/NotificationReducer";
 
 export const store = configureStore({
   reducer: {
@@ -10,5 +11,6 @@ export const store = configureStore({
     demandes: medicationReducer,
     updatedData: patchReducer,
     userData: userDataReducer,
+    notification: NotificationReducer,
   },
 });

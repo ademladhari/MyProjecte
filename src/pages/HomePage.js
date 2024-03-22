@@ -20,6 +20,7 @@ import { fetchMedications } from "../redux/actions/actiondata";
 import { getStatusAddress, getStatusLabName } from "../utils/api/functions";
 import { fetchUserData } from "../redux/actions/actionUserData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchNotifications } from "../redux/actions/ActionNotification";
 
 export default function HomePage({ navigation }) {
   const currentDate = new Date();
@@ -62,7 +63,20 @@ export default function HomePage({ navigation }) {
     };
     fetchData();
   }, [dispatch]);
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        dispatch(fetchNotifications()); // This line should dispatch the action
+        // Make sure you are getting the data from the action
+        console.log("Action dispatched successfully");
+      } catch (error) {
+        console.error("Error dispatching fetchMedications:", error);
+      }
+    };
+    fetchData();
+  }, [dispatch]);
+  const Notifications = useSelector((state) => state.notification);
+  console.log("notifications", Notifications);
   useEffect(() => {
     // Filter demandes based on the search query and selected category
     if (demandes) {

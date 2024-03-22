@@ -44,7 +44,7 @@ export default function DeliveryPage({ navigation }) {
     };
     fetchData();
   }, [dispatch]);
-
+  console.log("heheh", demandes);
   return (
     <>
       <ScrollView className="h-[20%] ">
