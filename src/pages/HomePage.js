@@ -76,7 +76,6 @@ export default function HomePage({ navigation }) {
     fetchData();
   }, [dispatch]);
   const Notifications = useSelector((state) => state.notification);
-  console.log("notifications", Notifications);
   useEffect(() => {
     // Filter demandes based on the search query and selected category
     if (demandes) {
@@ -139,7 +138,6 @@ export default function HomePage({ navigation }) {
         {filteredMedications !== undefined && filteredMedications.length > 0 ? (
           filteredMedications.map((demande, index) => (
             <>
-              {console.log("demande", demande)}
               {demande.agentUserID === userID && demande.Status !== "livre" && (
                 <View className="h-[80px] my-3">
                   <TouchableOpacity
@@ -151,8 +149,6 @@ export default function HomePage({ navigation }) {
                     }
                     style={styles.cardContainer}
                   >
-                    {console.log(demande.Status)}
-
                     <Carddelivery
                       key={index}
                       matrecule={demande.ArrivalLabName}

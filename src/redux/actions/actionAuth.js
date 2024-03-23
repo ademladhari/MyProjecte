@@ -3,10 +3,10 @@ import { login } from "../../services/AuthLogin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native"; // Import Alert from react-native
 import { getUserData } from "./ActionUser";
-import { useRef, useState } from "react";
 import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
-import { Platform } from "react-native";
+import { useRef, useState } from "react";
+
+import { registerForPushNotificationsAsync } from "../../../App";
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAILURE = "LOGIN_FAILURE";
@@ -23,61 +23,14 @@ export const loginUser = (username, password) => {
   return async (dispatch) => {
     try {
       const { token, user } = await login(username, password);
-      const [expoPushToken, setExpoPushToken] = useState("");
-      const [notification, setNotification] = useState(false);
-      const notificationListener = useRef();
-      const responseListener = useRef();
       // Store token in AsyncStorage
       await AsyncStorage.setItem("token", token);
-      useEffect(() => {
-        registerForPushNotificationsAsync().then((token) =>
-          setExpoPushToken(token)
-        );
 
-        notificationListener.current =
-          Notifications.addNotificationReceivedListener((notification) => {
-            setNotification(notification);
-          });
-
-        responseListener.current =
-          Notifications.addNotificationResponseReceivedListener((response) => {
-            console.log(response);
-          });
-
-        return () => {
-          Notifications.removeNotificationSubscription(
-            notificationListener.current
-          );
-          Notifications.removeNotificationSubscription(
-            responseListener.current
-          );
-        };
-      }, []);
       dispatch({
         type: LOGIN_SUCCESS,
         payload: { token, user },
       });
-      // Phone Token Creation
-      registerForPushNotificationsAsync().then((token) =>
-        setExpoPushToken(token)
-      );
-
-      notificationListener.current =
-        Notifications.addNotificationReceivedListener((notification) => {
-          setNotification(notification);
-        });
-
-      responseListener.current =
-        Notifications.addNotificationResponseReceivedListener((response) => {
-          console.log(response);
-        });
-
-      return () => {
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
-        Notifications.removeNotificationSubscription(responseListener.current);
-      };
+      // Show success alert
     } catch (error) {
       dispatch({ type: LOGIN_FAILURE, payload: error.message });
       // Show error alert
@@ -85,45 +38,6 @@ export const loginUser = (username, password) => {
     }
   };
 };
-async function registerForPushNotificationsAsync() {
-  let token;
-
-  if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-
-  if (Device.isDevice) {
-    console.log("here");
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
-      return;
-    }
-    // Learn more about projectId:
-    // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-    token = (
-      await Notifications.getExpoPushTokenAsync({
-        projectId: "9675060f-ce94-49c2-af77-09e9b5674ec5",
-      })
-    ).data;
-    console.log("token", token);
-  } else {
-    alert("Must use physical device for Push Notifications");
-  }
-
-  return token;
-}
 
 export const checkAuthentication = () => {
   return async (dispatch) => {

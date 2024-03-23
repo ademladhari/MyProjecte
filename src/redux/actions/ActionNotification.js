@@ -12,7 +12,6 @@ export const fetchNotifications = () => {
       // Fetch medications data using the fetchData function
       const response = await NotificationData();
 
-      console.log("heheh", response);
       // Dispatch the action with the medications data
       dispatch({
         type: FETCH_NOTITFICATIONS,

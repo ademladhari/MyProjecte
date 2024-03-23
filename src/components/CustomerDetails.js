@@ -27,7 +27,7 @@ const CustomerDetails = (prop) => {
       }}
     />
   );
-  console.log("qrcode", qrcode);
+
   const handleCallPress = () => {
     Linking.openURL(`tel:${number}`);
   };

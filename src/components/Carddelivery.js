@@ -15,7 +15,7 @@ const Carddelivery = (prop) => {
       }}
     />
   );
-  console.log(address);
+
   const CircleOpacity = ({ color = "#F6995C", size = 40 }) => {
     const scaleValue = useRef(new Animated.Value(1)).current;
 

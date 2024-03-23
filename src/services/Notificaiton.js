@@ -3,7 +3,7 @@ import { getApi } from "../utils/api/api";
 export const NotificationData = async () => {
   try {
     const response = await getApi.get(`/Notification/`); // Adjust the URL as per your API endpoint
-    console.log(response);
+
     return response.data;
     // Assuming you want to return the data from the response
   } catch (error) {

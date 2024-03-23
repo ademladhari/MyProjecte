@@ -110,7 +110,6 @@ export default function DetailsScreen({ route, navigation }) {
         <Text className="text-2xl h-[100%]  ml-20 mt-3">Delivery Details</Text>
       </View>
       <View className="h-[35%]">
-        {console.log(getStatusLabName(demande))}
         {userData && (
           <CustomerDetails
             number={updateDemande.DepartureTelMobile}
