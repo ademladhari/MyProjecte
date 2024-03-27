@@ -89,7 +89,9 @@ export default function HomePage({ navigation }) {
     if (!demandes || !Array.isArray(demandes)) return 0;
 
     return demandes.reduce((count, demande) => {
-      return demande.Status === "livre" ? count + 1 : count;
+      return demande.Status === "livre" && demande.agentUserID === userID
+        ? count + 1
+        : count;
     }, 0);
   }
 
@@ -97,7 +99,9 @@ export default function HomePage({ navigation }) {
     if (!demandes || !Array.isArray(demandes)) return 0;
 
     return demandes.reduce((count, demande) => {
-      return demande.Status !== "livre" && demande.Status !== "en cours"
+      return demande.Status !== "livre" &&
+        demande.agentUserID === userID &&
+        demande.Status !== "en cours"
         ? count + 1
         : count;
     }, 0);
@@ -134,7 +138,7 @@ export default function HomePage({ navigation }) {
       </View>
       <ScrollView className="h-[20%] ">
         <Text className="text-xl mt-3 ml-4"> Pending</Text>
-
+        {console.log(userID)}
         {filteredMedications !== undefined && filteredMedications.length > 0 ? (
           filteredMedications.map((demande, index) => (
             <>
@@ -151,12 +155,9 @@ export default function HomePage({ navigation }) {
                   >
                     <Carddelivery
                       key={index}
-                      matrecule={demande.ArrivalLabName}
                       name={getStatusLabName(demande)}
                       price={demande.price}
                       place={getStatusAddress(demande)}
-                      Governorate={demande.Governorate}
-                      DepartureGovernorate={demande.DepartureGovernorate}
                       color={"p"}
                     />
                   </TouchableOpacity>

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Image, Text, View, Animated } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 const Carddelivery = (prop) => {
-  const { matrecule, name, place, price, color, address } = prop;
+  const { name, place, price, color } = prop;
   const Circle = ({ color = "F6995C", size = 40 }) => (
     <View
       style={{

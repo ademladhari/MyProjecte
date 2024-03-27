@@ -4,7 +4,7 @@ export const getStatusAddressForMap = (demande) => {
       return (
         demande.ArrivalGovernorate +
         "," +
-        demande.ArrivalLocation +
+        demande.ArrivalCity +
         "," +
         demande.ArrivalAddress
       );
@@ -12,7 +12,7 @@ export const getStatusAddressForMap = (demande) => {
       return (
         demande.DepartureGovernorate +
         "," +
-        demande.DepartureLocation +
+        demande.DepartureCity +
         "," +
         demande.DepartureAddress
       );
@@ -20,7 +20,7 @@ export const getStatusAddressForMap = (demande) => {
       return (
         demande.DepartureGovernorate +
         "," +
-        demande.DepartureLocation +
+        demande.DepartureCity +
         "," +
         demande.DepartureAddress
       );
@@ -28,7 +28,7 @@ export const getStatusAddressForMap = (demande) => {
       return (
         demande.ArrivalGovernorate +
         "," +
-        demande.ArrivalLocation +
+        demande.ArrivalCity +
         "," +
         demande.ArrivalAddress
       );
@@ -41,13 +41,13 @@ export const getStatusAddressForMap = (demande) => {
 export const getStatusAddress = (demande) => {
   switch (demande.Status) {
     case "en cours":
-      return demande.DepartureGovernorate + "," + demande.DepartureLocation;
+      return demande.DepartureGovernorate + "," + demande.DepartureCity;
     case "affecté":
-      return demande.DepartureGovernorate + "," + demande.DepartureLocation;
+      return demande.DepartureGovernorate + "," + demande.DepartureCity;
     case "collecté":
-      return demande.ArrivalGovernorate + "," + demande.ArrivalLocation;
+      return demande.ArrivalGovernorate + "," + demande.ArrivalCity;
     case "livre":
-      return demande.ArrivalGovernorate + "," + demande.ArrivalLocation;
+      return demande.ArrivalGovernorate + "," + demande.ArrivalCity;
     case "canceled":
       return "Address for canceled";
     default:

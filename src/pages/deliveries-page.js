@@ -30,6 +30,7 @@ export default function DeliveryPage({ navigation }) {
   });
 
   const dispatch = useDispatch();
+
   const demandes = useSelector((state) => state.demandes.demandes);
 
   useEffect(() => {
@@ -48,10 +49,11 @@ export default function DeliveryPage({ navigation }) {
   return (
     <>
       <ScrollView className="h-[20%] ">
+        {console.log("demandesDelivery", demandes)}
         {demandes !== null && demandes.length > 0 ? (
           demandes.map(
             (demande, index) =>
-              demande.agentUserID === null && (
+              demande.Status === "en cours" && (
                 <View className="h-[80px] my-3">
                   <TouchableOpacity
                     key={index}

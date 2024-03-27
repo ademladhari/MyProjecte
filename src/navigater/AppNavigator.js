@@ -123,6 +123,7 @@ const MainNavigator = () => (
     {/* Define your screens here */}
     <Drawer.Screen name="Home" component={HomePage} />
     <Drawer.Screen name="Delivery" component={DeliveryPage} />
+    <Drawer.Screen name="Delivered" component={DeliveryPage} />
     <Drawer.Screen name="Notification" component={NotificationsPage} />
     <Drawer.Screen name="Profile" component={Profile} />
   </Drawer.Navigator>
