@@ -45,7 +45,7 @@ export default function DeliveryPage({ navigation }) {
     const updatedFilteredDemandes = demandes.map((demande) => {
       console.log(demande.DemandID);
       if (checkedCards.includes(demande.DemandID)) {
-        return { ...demande, Status: "affecté" };
+        return { ...demande, Status: "livre" };
       }
       return demande;
     });
@@ -154,7 +154,7 @@ export default function DeliveryPage({ navigation }) {
           {demandes !== null && demandes.length > 0 ? (
             filteredDemandes.map(
               (demande, index) =>
-                demande.Status === "en cours" && (
+                demande.Status === "collecté" && (
                   <View className="h-[90px] my-3">
                     <TouchableOpacity
                       key={index}
@@ -198,7 +198,7 @@ export default function DeliveryPage({ navigation }) {
         <ShowCheckedIdsButton
           checkedIds={checkedCards}
           onPress={() => {
-            handleShowCheckedIds(checkedCards, dispatch, "affecté");
+            handleShowCheckedIds(checkedCards, dispatch, "livre");
             updateStatusForChecked();
             resetCheckBoxs();
           }}

@@ -7,7 +7,10 @@ import {
 export const patchData = (demandId, updatedData) => {
   return async (dispatch) => {
     try {
-      const response = await getApi.patch(`/demand/${demandId}`, updatedData);
+      const response = await getApi.patch(
+        `/MobileDemand/${demandId}`,
+        updatedData
+      );
       // Make PATCH request to your API endpoint
       dispatch({ type: PATCH_DATA_SUCCESS, payload: response.data });
     } catch (error) {

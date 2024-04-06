@@ -14,6 +14,8 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { SvgUri } from "react-native-svg";
 import { Dimensions, Image, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import Collectedpage from "../pages/collected-page";
+import QRCodeScanner from "../pages/scannerscreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -71,6 +73,23 @@ const CustomDrawerContent = () => {
             style={{ marginLeft: 8 }}
           />
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigateToScreen("collected")}>
+          <DrawerItem
+            label=""
+            icon={({ color, size }) => (
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <MaterialCommunityIcons
+                  name={"truck"}
+                  size={25}
+                  color={color}
+                />
+
+                <Text style={{ marginLeft: 10 }}>Collected</Text>
+              </View>
+            )}
+            style={{ marginLeft: 8 }}
+          />
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => navigateToScreen("Notification")}>
           <DrawerItem
             label=""
@@ -123,6 +142,7 @@ const MainNavigator = () => (
     {/* Define your screens here */}
     <Drawer.Screen name="Home" component={HomePage} />
     <Drawer.Screen name="Delivery" component={DeliveryPage} />
+    <Drawer.Screen name="collected" component={Collectedpage} />
     <Drawer.Screen name="Delivered" component={DeliveryPage} />
     <Drawer.Screen name="Notification" component={NotificationsPage} />
     <Drawer.Screen name="Profile" component={Profile} />
@@ -153,6 +173,7 @@ const AppNavigator = () => {
               name="Main"
               component={MainNavigator}
             />
+            <Stack.Screen name="QRCodeScanner" component={QRCodeScanner} />
 
             <Stack.Screen
               options={{ headerShown: false }}

@@ -9,6 +9,9 @@ import {
   TouchableOpacity,
   View,
   ScrollY,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform, // Import TextInput for search input
 } from "react-native";
 import CardSomething from "../components/CardSomething";
 import Carddelivery from "../components/Carddelivery";
@@ -21,6 +24,14 @@ import { getStatusAddress, getStatusLabName } from "../utils/api/functions";
 import { fetchUserData } from "../redux/actions/actionUserData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchNotifications } from "../redux/actions/ActionNotification";
+import CheckBox from "../components/Checkbox";
+import { ShowCheckedIdsButton } from "../components/checkedbutton";
+import { patchData } from "../redux/actions/ActionUpdate";
+import {
+  handleCheckBoxPress,
+  handleShowCheckedIds,
+} from "../utils/api/CardDeliveryFunctions";
+import SearchBar from "../components/search-bar";
 
 export default function HomePage({ navigation }) {
   const currentDate = new Date();
@@ -35,8 +46,9 @@ export default function HomePage({ navigation }) {
 
   const dispatch = useDispatch();
   const demandes = useSelector((state) => state.demandes.demandes);
-  const [filteredMedications, setFilteredMedications] = useState([]);
+  const [filteredDemandes, setfilteredDemandes] = useState([]);
   const [userID, setUserID] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -76,15 +88,24 @@ export default function HomePage({ navigation }) {
     fetchData();
   }, [dispatch]);
   const Notifications = useSelector((state) => state.notification);
+  const [checkedCards, setCheckedCards] = useState([]);
+  const [showCheckbox, setshowCheckbox] = useState(false);
+  const [searchBy, setSearchBy] = useState("requestName");
+
   useEffect(() => {
     // Filter demandes based on the search query and selected category
     if (demandes) {
-      let filteredMeds = demandes;
-      setFilteredMedications(filteredMeds);
+      let filterd = demandes;
+      if (searchQuery.trim() !== "") {
+        filterd = filterd.filter((demande) =>
+          demande.requestName.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
+      setfilteredDemandes(filterd);
     } else {
-      setFilteredMedications(null);
+      setfilteredDemandes(null);
     }
-  }, [demandes]);
+  }, [demandes, searchQuery]);
   function countDeliveredStatus(demandes) {
     if (!demandes || !Array.isArray(demandes)) return 0;
 
@@ -94,7 +115,35 @@ export default function HomePage({ navigation }) {
         : count;
     }, 0);
   }
-
+  useEffect(() => {
+    // Filter demandes based on the search query and selected category
+    if (demandes) {
+      let filterd = demandes;
+      console.log(searchBy);
+      if (searchQuery.trim() !== "") {
+        if (searchBy === "requestName") {
+          filterd = filterd.filter((demande) =>
+            demande.requestName
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase())
+          );
+        } else if (searchBy === "DepartureAddress") {
+          filterd = filterd.filter((demande) =>
+            demande.DepartureAddress.toLowerCase().includes(
+              searchQuery.toLowerCase()
+            )
+          );
+        } else if (searchBy === "name") {
+          filterd = filterd.filter((demande) =>
+            demande.name.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
+      }
+      setfilteredDemandes(filterd);
+    } else {
+      setfilteredDemandes(null);
+    }
+  }, [demandes, searchQuery, searchBy]);
   function countOtherStatus(demandes) {
     if (!demandes || !Array.isArray(demandes)) return 0;
 
@@ -106,13 +155,64 @@ export default function HomePage({ navigation }) {
         : count;
     }, 0);
   }
+  const resetCheckBoxs = () => {
+    setCheckedCards([]);
+    setshowCheckbox(false);
+  };
+  // Function to handle checkbox press
+  const [lastPress, setLastPress] = useState(0);
+  const [lastDemandeID, setLastDemandeID] = useState(0);
+
+  const handleDoublePress = (demande) => {
+    const currentTime = new Date().getTime();
+    const delta = currentTime - lastPress;
+
+    // Check if the current demande is the same as the last one and the time between presses is less than 500 milliseconds
+    if (demande.DemandID === lastDemandeID && delta < 500) {
+      // Time between two presses is less than 500 milliseconds, consider it a double press
+      handleCheckBoxPress(demande.DemandID, checkedCards, setCheckedCards);
+      setshowCheckbox(true);
+      navigation.navigate("DetailsScreen", {
+        demande: demande,
+      });
+    } else {
+      handleCheckBoxPress(demande.DemandID, checkedCards, setCheckedCards);
+      setshowCheckbox(true);
+    }
+
+    // Store the current demande ID and time of press
+    setLastDemandeID(demande.DemandID);
+    setLastPress(currentTime);
+  };
+  const updateStatusForChecked = () => {
+    // Update filteredDemandes after modifying them
+    console.log(checkedCards);
+    const updatedFilteredDemandes = demandes.map((demande) => {
+      console.log(demande.DemandID);
+      if (checkedCards.includes(demande.DemandID)) {
+        return { ...demande, Status: "collecté" };
+      }
+      return demande;
+    });
+    setfilteredDemandes(updatedFilteredDemandes);
+  };
+  const handleQRCodeRead = (event) => {
+    // Handle QR code data read from the scanner
+    const { data } = event;
+    // Do something with the QR code data, such as navigating to a new screen
+    // Example:
+    navigation.navigate("QRCodeDetails", { data });
+  };
   return (
-    <>
-      <View className="h-[12%]">
+    <View
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : null}
+    >
+      <View className="mb-2">
         <Text className="text-2xl ml-4">Hi,!</Text>
         <Text className="text-base ml-4">{formattedDate}</Text>
       </View>
-      <View className="flex w-[full] h-[18%]  flex-row rounded-xl">
+      <KeyboardAvoidingView className="flex w-[full]   flex-row rounded-xl">
         <CardSomething
           img={require("../../assets/delivereddd.png")}
           deliveredOrPending={"Delivered"}
@@ -121,12 +221,7 @@ export default function HomePage({ navigation }) {
           colorText={"green-600"}
           name={"truck-check"}
         />
-        <Image
-          source={{
-            uri: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAAOYSURBVO3BMY7jSAAEwcyG/v/lOhlrlEWAEDW7c6gI88bMH4eZcpgph5lymCmHmXKYKYeZcpgph5lymCmHmXKYKYeZcpgph5ny4kMqPykJTaUloal8UxKuqPykJHziMFMOM+UwU148LAlPUvmbknBFpSXhShKepPKkw0w5zJTDTHnxZSp3JOGOJDSVK0loKi0JP0nljiR802GmHGbKYaa8+OVUWhKaypUkXFG5koT/k8NMOcyUw0x58csloal8UxKaSkvCb3aYKYeZcpgpL74sCX9TEprKHUloKk9Kwr/kMFMOM+UwU148TOUnqbQkNJWWhKbSktBUWhKayh0q/7LDTDnMlMNMMW/8YipXktBUWhLuULmShN/sMFMOM+UwU158SKUloalcSUJTuSMJTaWptCQ0lStJ+IRKS8IVlZaEpnIlCZ84zJTDTDnMFPPGB1RaEu5QuZKEpnJHEppKS0JTuSMJd6i0JDSVK0n4psNMOcyUw0x58TCVloSm0pLQVJrKlSQ0lStJuCMJT0pCU2lJ+JsOM+UwUw4zxbzxIJUrSfiESktCU2lJaCotCZ9QuZKEpvKkJDzpMFMOM+UwU8wbD1L5piQ8SaUloam0JFxRuZKEpvKkJHziMFMOM+UwU148LAlXVO5IwhWVn6TyCZU7ktBUvukwUw4z5TBTzBsPUmlJaCqfSMIVlTuS0FRaEj6h0pJwReWOJDzpMFMOM+UwU158SKUloam0JDSVK0loKnckoalcSUJTuSMJV1RaEloS7lBpSfjEYaYcZsphppg3/mEqLQlPUmlJaCotCU3lSUloKnck4ROHmXKYKYeZ8uIfl4QrKi0JTaUloSXhSUm4Q+VKEq6oPOkwUw4z5TBTXnxI5Scl4ZtUnqTSknBFpSWhqXzTYaYcZsphprx4WBKepHKHSktCU2lJuEPljiQ8KQlN5UmHmXKYKYeZ8uLLVO5Iwh1JaCpXkvCJJDSVpvKJJFxR+abDTDnMlMNMefHLqTwpCVdUWhKaypUkNJU7ktBUnnSYKYeZcpgpL/5nktBUWhLuUGlJaCp3qFxRaUloKi0JTzrMlMNMOcyUF1+WhG9KQlO5ovKkJDSVloSm0pLQVJpKS8I3HWbKYaYcZsqLh6n8JJUrSWgqLQnfpNKS0FTuULmShE8cZsphphxminlj5o/DTDnMlMNMOcyUw0w5zJTDTDnMlMNMOcyUw0w5zJTDTDnMlMNM+Q9KQZUffwDbdwAAAABJRU5ErkJggg==",
-          }}
-          style={{ width: 10, height: 10 }}
-        />
+
         <CardSomething
           img={require("../../assets/pendinggg.png")}
           deliveredOrPending={"Pending"}
@@ -135,41 +230,84 @@ export default function HomePage({ navigation }) {
           colorText="text-[red]"
           name={"truck-fast"}
         />
-      </View>
-      <ScrollView className="h-[20%] ">
-        <Text className="text-xl mt-3 ml-4"> Pending</Text>
-        {console.log(userID)}
-        {filteredMedications !== undefined && filteredMedications.length > 0 ? (
-          filteredMedications.map((demande, index) => (
-            <>
-              {demande.agentUserID === userID && demande.Status !== "livre" && (
-                <View className="h-[80px] my-3">
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() =>
-                      navigation.navigate("DetailsScreen", {
-                        demande: demande,
-                      })
-                    }
-                    style={styles.cardContainer}
-                  >
-                    <Carddelivery
-                      key={index}
-                      name={getStatusLabName(demande)}
-                      price={demande.price}
-                      place={getStatusAddress(demande)}
-                      color={"p"}
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
-            </>
-          ))
-        ) : (
-          <Text>Loading loding data...</Text>
-        )}
-      </ScrollView>
-    </>
+      </KeyboardAvoidingView>
+      <TouchableOpacity
+        activeOpacity={1}
+        className="h-[70%] "
+        onPress={() => {
+          resetCheckBoxs();
+        }}
+      >
+        <KeyboardAvoidingView className="h-[100%]">
+          <View style={{ flex: 1 }}>
+            {/* Other components... */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate("QRCodeScanner")}
+              style={styles.qrButton}
+            >
+              <Text style={styles.qrButtonText}>Scan QR Code</Text>
+            </TouchableOpacity>
+          </View>
+          <Text className="text-xl mt-2 mb-3 ml-4">Pending</Text>
+          <SearchBar
+            setSearchBy={setSearchBy}
+            setSearchQuery={setSearchQuery}
+            searchBy={searchBy}
+          ></SearchBar>
+          <ScrollView className=" ">
+            {filteredDemandes !== undefined && filteredDemandes.length > 0 ? (
+              filteredDemandes.map((demande, index) => (
+                <>
+                  {demande.agentUserID === userID &&
+                    demande.Status !== "livre" &&
+                    demande.Status != "en cours" && (
+                      <View className="h-[80px] my-3" key={index}>
+                        <TouchableOpacity
+                          onPress={() => handleDoublePress(demande)}
+                          onLongPress={() => {
+                            handleCheckBoxPress(
+                              demande.DemandID,
+                              checkedCards,
+                              setCheckedCards
+                            );
+                            setshowCheckbox(true);
+                          }}
+                          delayLongPress={100}
+                          style={styles.cardContainer}
+                        >
+                          <Carddelivery
+                            key={index}
+                            showCheckbox={showCheckbox}
+                            demande={demande}
+                            setCheckedCards={setCheckedCards}
+                            checkedCards={checkedCards}
+                            handleCheckBoxPress={handleCheckBoxPress}
+                            name={getStatusLabName(demande)}
+                            price={demande.price}
+                            place={getStatusAddress(demande)}
+                            color={"p"}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                </>
+              ))
+            ) : (
+              <Text style={styles.noDataText}>No Demandes available</Text>
+            )}
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </TouchableOpacity>
+      {showCheckbox && (
+        <ShowCheckedIdsButton
+          onPress={() => {
+            handleShowCheckedIds(checkedCards, dispatch, "collecté");
+            updateStatusForChecked();
+            resetCheckBoxs();
+          }}
+        />
+      )}
+    </View>
   );
 }
 const styles = StyleSheet.create({
@@ -179,5 +317,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "transparent", // Set background color to transparent to see the gradient
+  },
+  searchInput: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    margin: 10,
+    paddingLeft: 10,
+  },
+  noDataText: {
+    padding: 10,
+    fontSize: 16,
+    textAlign: "center",
   },
 });

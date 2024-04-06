@@ -1,8 +1,21 @@
 import React, { useEffect, useRef } from "react";
 import { Image, Text, View, Animated } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-const Carddelivery = (prop) => {
-  const { name, place, price, color } = prop;
+import CheckBox from "./Checkbox";
+
+const Carddelivery = (props) => {
+  const {
+    name,
+    place,
+    price,
+    color,
+    showCheckbox,
+    checkedCards,
+    setCheckedCards,
+    handleCheckBoxPress,
+    demande,
+  } = props;
+
   const Circle = ({ color = "F6995C", size = 40 }) => (
     <View
       style={{
@@ -12,8 +25,20 @@ const Carddelivery = (prop) => {
         borderRadius: size / 2,
         marginLeft: 15,
         marginTop: 20,
+
+        alignItems: "center", // Center the content horizontally
       }}
-    />
+    >
+      {/* Render the checkbox inside the red circle */}
+      {showCheckbox && (
+        <CheckBox
+          checked={checkedCards.includes(demande.DemandID)}
+          onPress={() =>
+            handleCheckBoxPress(demande.DemandID, checkedCards, setCheckedCards)
+          }
+        />
+      )}
+    </View>
   );
 
   const CircleOpacity = ({ color = "#F6995C", size = 40 }) => {
@@ -69,6 +94,7 @@ const Carddelivery = (prop) => {
           <Circle color="red" size={20} />
           <CircleOpacity color="red" size={30} />
         </View>
+
         <View className="w-[50%]">
           <Text className=" text-lg  text-Bold font-normal ">{name}</Text>
           <View className="w-[100%] h-[70%] pt-2  flex flex-row">
@@ -78,7 +104,6 @@ const Carddelivery = (prop) => {
               size={23}
               color="green"
             />
-
             <Text className=" w-28 h-[100%]  text-xm  text-Bold font-normal ">
               {place}
             </Text>
