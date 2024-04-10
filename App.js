@@ -1,18 +1,16 @@
-import React, { useCallback, useState } from "react";
-import { Provider, useSelector } from "react-redux"; // Import useSelector hook
-import { store } from "./src/redux/store/store";
-import AppNavigator from "./src/navigater/AppNavigator";
-import { AppRegistry } from "react-native";
+import React from "react";
+import MapboxGL from "@react-native-mapbox-gl/maps";
 
-const App = () => {
-  // Use useSelector hook to get the login status from Redux store
-
+// Replace '<YOUR_MAPBOX_ACCESS_TOKEN>' with your actual Mapbox access token
+MapboxGL.setAccessToken(
+  "pk.eyJ1Ijoic2FpZm1zayIsImEiOiJjbHVyZnUzbmkwODJrMnJwYWZyem0ybXNoIn0.aSQunMAR3GWfJpVBaJkaEg"
+);
+const MapScreen = () => {
   return (
-    <Provider store={store}>
-      <AppNavigator />
-    </Provider>
+    <MapboxGL.MapView>
+      <MapboxGL.Camera />
+    </MapboxGL.MapView>
   );
 };
-AppRegistry.registerComponent("myprojecte", () => App);
 
-export default App;
+export default MapScreen;
