@@ -1,12 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import {
-  Button,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ScrollView, Text, View } from "react-native";
 const Catalogueitems = (props) => {
   const { name, image } = props;
   return (

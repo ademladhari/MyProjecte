@@ -46,6 +46,7 @@ export default function HomePage({ navigation }) {
 
   const dispatch = useDispatch();
   const demandes = useSelector((state) => state.demandes.demandes);
+  console.log("demandes,", demandes);
   const [filteredDemandes, setfilteredDemandes] = useState([]);
   const [userID, setUserID] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
@@ -196,18 +197,9 @@ export default function HomePage({ navigation }) {
     });
     setfilteredDemandes(updatedFilteredDemandes);
   };
-  const handleQRCodeRead = (event) => {
-    // Handle QR code data read from the scanner
-    const { data } = event;
-    // Do something with the QR code data, such as navigating to a new screen
-    // Example:
-    navigation.navigate("QRCodeDetails", { data });
-  };
+
   return (
-    <View
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : null}
-    >
+    <View style={{ flex: 1 }}>
       <View className="mb-2">
         <Text className="text-2xl ml-4">Hi,!</Text>
         <Text className="text-base ml-4">{formattedDate}</Text>
@@ -239,15 +231,19 @@ export default function HomePage({ navigation }) {
         }}
       >
         <KeyboardAvoidingView className="h-[100%]">
-          <View style={{ flex: 1 }}>
-            {/* Other components... */}
-            <TouchableOpacity
-              onPress={() => navigation.navigate("QRCodeScanner")}
-              style={styles.qrButton}
-            >
-              <Text style={styles.qrButtonText}>Scan QR Code</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("QRCodeScanner", { userID: userID });
+              navigation.setParams({
+                setfilteredDemandes: setfilteredDemandes,
+                status: "collecté",
+              });
+            }}
+            style={styles.qrButton}
+          >
+            <Text style={styles.qrButtonText}>Scan QR Code</Text>
+          </TouchableOpacity>
+
           <Text className="text-xl mt-2 mb-3 ml-4">Pending</Text>
           <SearchBar
             setSearchBy={setSearchBy}
@@ -258,6 +254,7 @@ export default function HomePage({ navigation }) {
             {filteredDemandes !== undefined && filteredDemandes.length > 0 ? (
               filteredDemandes.map((demande, index) => (
                 <>
+                  {console.log(userID)}
                   {demande.agentUserID === userID &&
                     demande.Status !== "livre" &&
                     demande.Status != "en cours" && (

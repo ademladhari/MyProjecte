@@ -1,113 +1,89 @@
-import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Platform,
-  PermissionsAndroid,
-  Alert,
-} from "react-native";
-import { RNCamera } from "react-native-camera";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useEffect, useRef } from "react";
+import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Camera } from "expo-camera";
+import { patchData } from "../redux/actions/ActionUpdate";
+import { useDispatch } from "react-redux";
 
-const QRCodeScanner = () => {
-  const navigation = useNavigation();
-  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+export default function QRCodeScanner({ route }) {
+  const [hasPermission, setHasPermission] = useState(null);
+  const dispatch = useDispatch();
+  const [scannedData, setScannedData] = useState([]); // State to store scanned QR codes
+  const cameraRef = useRef(null);
+  const [status, setStatus] = useState("en cours");
+  const { userID } = route.params;
 
   useEffect(() => {
-    const requestPermission = async () => {
-      if (Platform.OS === "android") {
-        try {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.CAMERA,
-            {
-              title: "Camera Permission",
-              message: "This app needs access to your camera.",
-              buttonNeutral: "Ask Me Later",
-              buttonNegative: "Cancel",
-              buttonPositive: "OK",
-            }
-          );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log("Camera permission granted");
-            setHasCameraPermission(true);
-          } else {
-            console.log("Camera permission denied");
-            setHasCameraPermission(false);
-          }
-        } catch (error) {
-          console.error("Error requesting camera permission:", error);
-        }
-      } else {
-        console.log(
-          "iOS platform does not require explicit permission for camera access."
-        );
-        setHasCameraPermission(true);
-      }
-    };
-
-    requestPermission();
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
   }, []);
-
-  const handleQRCodeRead = (event) => {
-    const { data } = event;
-    // Navigate to the QRCodeDetails screen with the scanned data
-    navigation.navigate("QRCodeDetails", { data });
+  const changeDemand = () => {
+    setStatus(status === "en cours" ? "collecté" : "en cours");
+    console.log(status);
+  };
+  const handleBarCodeScanned = ({ data }) => {
+    if (!scannedData.includes(data)) {
+      setScannedData([...scannedData, data]); // Add the scanned QR code to the list
+      const demandId = JSON.parse(data).insertId;
+      dispatch(
+        patchData(demandId, {
+          Status: status,
+          agentUserID: userID,
+        })
+      );
+      // Add a short delay before fetching the data again
+      alert(`QR code with data ${data} has been scanned!`);
+    }
   };
 
-  if (hasCameraPermission === null) {
-    return <View />;
-  }
-
-  if (hasCameraPermission === false) {
-    return (
-      <View style={styles.container}>
-        <Text>Camera permission denied. Please grant camera access.</Text>
-      </View>
-    );
-  }
+  const onCameraReady = () => {
+    // You can do something when the camera is ready
+  };
 
   return (
     <View style={styles.container}>
-      <RNCamera
+      <Camera
+        ref={cameraRef}
         style={styles.camera}
-        type={RNCamera.Constants.Type.back}
-        onBarCodeRead={handleQRCodeRead}
-        barCodeTypes={[RNCamera.Constants.BarCodeType.qr]}
-      />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.goBack()}
+        type={Camera.Constants.Type.back}
+        onBarCodeScanned={handleBarCodeScanned}
+        onCameraReady={onCameraReady}
       >
-        <Text style={styles.buttonText}>Go Back</Text>
-      </TouchableOpacity>
+        <View style={styles.overlay}>
+          <TouchableOpacity
+            style={styles.torchButton}
+            onPress={() => changeDemand()}
+          >
+            <Text style={styles.torchText}>{status}</Text>
+          </TouchableOpacity>
+        </View>
+      </Camera>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
     backgroundColor: "black",
   },
   camera: {
     flex: 1,
+  },
+  overlay: {
+    flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
+    padding: 20,
   },
-  button: {
-    position: "absolute",
-    bottom: 20,
-    left: 20,
-    backgroundColor: "rgba(255,255,255,0.5)",
-    padding: 15,
-    borderRadius: 10,
+  torchButton: {
+    backgroundColor: "rgba(255,255,255,0.3)",
+    padding: 10,
+    borderRadius: 5,
   },
-  buttonText: {
-    fontSize: 16,
+  torchText: {
+    fontSize: 20,
+    color: "white",
   },
 });
-
-export default QRCodeScanner;

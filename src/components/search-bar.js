@@ -28,7 +28,7 @@ export default function SearchBar({ setSearchQuery, searchBy, setSearchBy }) {
           onChangeText={(text) => setSearchQuery(text)}
         />
         <TouchableOpacity onPress={() => setShowDropdown(!showDropdown)}>
-          <Icon name="chevron-down" size={20} style={styles.dropdownIcon} />
+          <Icon name="chevron-down" size={24} style={styles.dropdownIcon} />
         </TouchableOpacity>
       </View>
       {showDropdown && (
