@@ -9,7 +9,6 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      r
       <AppNavigator />
     </Provider>
   );
