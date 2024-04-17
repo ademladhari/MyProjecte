@@ -13,6 +13,8 @@ import {
   KeyboardAvoidingView,
   Platform, // Import TextInput for search input
 } from "react-native";
+import { Dimensions } from "react-native";
+const screenWidth = Dimensions.get("window").width;
 import CardSomething from "../components/CardSomething";
 import Carddelivery from "../components/Carddelivery";
 import { useEffect, useState } from "react";
@@ -32,7 +34,8 @@ import {
   handleShowCheckedIds,
 } from "../utils/api/CardDeliveryFunctions";
 import SearchBar from "../components/search-bar";
-
+import { LineChart } from "react-native-chart-kit";
+import { height } from "deprecated-react-native-prop-types/DeprecatedImagePropType";
 export default function HomePage({ navigation }) {
   const currentDate = new Date();
 
@@ -197,7 +200,61 @@ export default function HomePage({ navigation }) {
     });
     setfilteredDemandes(updatedFilteredDemandes);
   };
+  const chartConfig = {
+    backgroundGradientFromOpacity: 0,
+    xAxisInterval: 1,
+    // Set the interval between x-axis labels to 1
 
+    backgroundGradientToOpacity: 0,
+    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    strokeWidth: 2, // optional, default 3
+    barPercentage: 3,
+    propsForVerticalLabels: {
+      // Vertical offset
+      fontSize: 8, // Font size
+      // Any other SVG properties are also applicable here
+    },
+    useShadowColorFromDataset: false, // optional
+  };
+
+  const data = {
+    labels: ["1", "2", "3", "4"],
+
+    datasets: [
+      {
+        data: [0, 12, -17, 8],
+        // optional
+      },
+    ],
+  };
+  const datasetLength = 14; // Store the length of the dataset separately
+
+  const data2 = {
+    datasets: [
+      {
+        data: [12, -17, 8, -23, 18, -9, 4, 21, -16, -3, 14, -20, -7, 22],
+        // optional
+      },
+    ],
+    labels: Array.from({ length: Math.ceil(datasetLength) }, (_, i) =>
+      (i + 1).toString()
+    ),
+  };
+
+  const data3 = {
+    labels: ["1", "2", "3", "4"],
+
+    datasets: [
+      {
+        data: [0, 12, -17, 8],
+        // optional
+      },
+    ],
+  };
+
+  const maxVisibleLabels = 8; // Set this to the maximum number of labels you want to display
+  const xLabelsOffset = -(data.labels.length - maxVisibleLabels);
+  console.table(demandes);
   return (
     <View style={{ flex: 1 }}>
       <View className="mb-2">
@@ -206,31 +263,34 @@ export default function HomePage({ navigation }) {
       </View>
       <KeyboardAvoidingView className="flex w-[full]   flex-row rounded-xl">
         <CardSomething
-          img={require("../../assets/delivereddd.png")}
-          deliveredOrPending={"Delivered"}
-          number={countDeliveredStatus(demandes)}
-          color="green"
-          colorText={"green-600"}
-          name={"truck-check"}
-        />
-
-        <CardSomething
           img={require("../../assets/pendinggg.png")}
-          deliveredOrPending={"Pending"}
+          deliveredOrPending={"collected"}
           number={countOtherStatus(demandes)}
           color="red"
           colorText="text-[red]"
           name={"truck-fast"}
+          userID={userID}
+          page="collected"
+        />
+
+        <CardSomething
+          deliveredOrPending={"pending"}
+          number={countDeliveredStatus(demandes)}
+          color="green"
+          colorText={"green-600"}
+          name={"truck-check"}
+          userID={userID}
+          page="Pending"
         />
       </KeyboardAvoidingView>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         activeOpacity={1}
-        className="h-[70%] "
+        className="h-[10%] "
         onPress={() => {
           resetCheckBoxs();
         }}
       >
-        <KeyboardAvoidingView className="h-[100%]">
+        <KeyboardAvoidingView className="h-[30%]">
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("QRCodeScanner", { userID: userID });
@@ -243,58 +303,42 @@ export default function HomePage({ navigation }) {
           >
             <Text style={styles.qrButtonText}>Scan QR Code</Text>
           </TouchableOpacity>
-
-          <Text className="text-xl mt-2 mb-3 ml-4">Pending</Text>
-          <SearchBar
-            setSearchBy={setSearchBy}
-            setSearchQuery={setSearchQuery}
-            searchBy={searchBy}
-          ></SearchBar>
-          <ScrollView className=" ">
-            {filteredDemandes !== undefined && filteredDemandes.length > 0 ? (
-              filteredDemandes.map((demande, index) => (
-                <>
-                  {console.log(userID)}
-                  {demande.agentUserID === userID &&
-                    demande.Status !== "livre" &&
-                    demande.Status != "en cours" && (
-                      <View className="h-[80px] my-3" key={index}>
-                        <TouchableOpacity
-                          onPress={() => handleDoublePress(demande)}
-                          onLongPress={() => {
-                            handleCheckBoxPress(
-                              demande.DemandID,
-                              checkedCards,
-                              setCheckedCards
-                            );
-                            setshowCheckbox(true);
-                          }}
-                          delayLongPress={100}
-                          style={styles.cardContainer}
-                        >
-                          <Carddelivery
-                            key={index}
-                            showCheckbox={showCheckbox}
-                            demande={demande}
-                            setCheckedCards={setCheckedCards}
-                            checkedCards={checkedCards}
-                            handleCheckBoxPress={handleCheckBoxPress}
-                            name={getStatusLabName(demande)}
-                            price={demande.price}
-                            place={getStatusAddress(demande)}
-                            color={"p"}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    )}
-                </>
-              ))
-            ) : (
-              <Text style={styles.noDataText}>No Demandes available</Text>
-            )}
-          </ScrollView>
         </KeyboardAvoidingView>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+      <ScrollView className="flex gap-3 mt-9 pb-16 ml-[-30] ">
+        <Text className="text-lg text-center">Container 1</Text>
+        <LineChart
+          className=" overflow-scroll"
+          data={data}
+          width={400}
+          height={165}
+          verticalLabelRotation={1}
+          chartConfig={chartConfig}
+          xLabelsOffset={-3}
+          bezier
+        />
+        <Text className="text-lg text-center">Container 1</Text>
+
+        <LineChart
+          data={data2}
+          width={screenWidth}
+          height={165}
+          verticalLabelRotation={10}
+          chartConfig={chartConfig}
+          bezier
+          xLabelsOffset={-3}
+        />
+        <Text className="text-lg text-center">Container 1</Text>
+
+        <LineChart
+          data={data3}
+          width={screenWidth}
+          height={165}
+          verticalLabelRotation={10}
+          chartConfig={chartConfig}
+          bezier
+        />
+      </ScrollView>
       {showCheckbox && (
         <ShowCheckedIdsButton
           onPress={() => {

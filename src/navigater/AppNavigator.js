@@ -16,6 +16,8 @@ import { Dimensions, Image, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Collectedpage from "../pages/collected-page";
 import QRCodeScanner from "../pages/scannerscreen";
+import PendingPage from "../pages/PendingPage";
+import Map from "../pages/map";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -73,6 +75,23 @@ const CustomDrawerContent = () => {
             style={{ marginLeft: 8 }}
           />
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigateToScreen("Pending")}>
+          <DrawerItem
+            label=""
+            icon={({ color, size }) => (
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <MaterialCommunityIcons
+                  name={"truck"}
+                  size={25}
+                  color={color}
+                />
+
+                <Text style={{ marginLeft: 10 }}>Pending</Text>
+              </View>
+            )}
+            style={{ marginLeft: 8 }}
+          />
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => navigateToScreen("collected")}>
           <DrawerItem
             label=""
@@ -90,6 +109,7 @@ const CustomDrawerContent = () => {
             style={{ marginLeft: 8 }}
           />
         </TouchableOpacity>
+
         <TouchableOpacity onPress={() => navigateToScreen("Notification")}>
           <DrawerItem
             label=""
@@ -143,7 +163,9 @@ const MainNavigator = () => (
     <Drawer.Screen name="Home" component={HomePage} />
     <Drawer.Screen name="Delivery" component={DeliveryPage} />
     <Drawer.Screen name="collected" component={Collectedpage} />
+    <Drawer.Screen name="Pending" component={PendingPage} />
     <Drawer.Screen name="Delivered" component={DeliveryPage} />
+    <Drawer.Screen name="map" component={Map} />
     <Drawer.Screen name="Notification" component={NotificationsPage} />
     <Drawer.Screen name="Profile" component={Profile} />
   </Drawer.Navigator>

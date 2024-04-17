@@ -17,6 +17,14 @@
         {
           "RNMapboxMapsDownloadToken": "pk.eyJ1Ijoic2FpZm1zayIsImEiOiJjbHVyZnUzbmkwODJrMnJwYWZyem0ybXNoIn0.aSQunMAR3GWfJpVBaJkaEg"
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow MyProjecte to access your camera",
+          "microphonePermission": "Allow MyProjecte to access your microphone",
+          "recordAudioAndroid": true
+        }
       ]
     ],
  

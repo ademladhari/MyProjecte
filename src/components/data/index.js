@@ -1,0 +1,48 @@
+export const testData = [
+  { month: "5:2", value: 0 },
+  { month: "5:2", value: 23 },
+  { month: "5:2", value: -20 },
+  { month: "5:2", value: 12 },
+  { month: "5:2", value: 25 },
+  { month: "5:2", value: 25 },
+  { month: "5:2", value: -20 },
+  { month: "5:2", value: -20 },
+  { month: "5:2", value: -20 },
+  { month: "5:2", value: -20 },
+  { month: "5:2", value: -20 },
+
+  { month: "5:2", value: 3 },
+  { month: "5:2", value: 3 },
+  { month: "5:2", value: 3 },
+  { month: "5:2", value: 25 },
+  { month: "5:2", value: 25 },
+  { month: "5:2", value: 25 },
+  { month: "5:2", value: -20 },
+  { month: "5:2r", value: -20 },
+  { month: "Mar", value: -20 },
+  { month: "Mar", value: -20 },
+
+  { month: "Jun", value: 3 },
+
+  { month: "Jun", value: 3 },
+];
+
+export const boxData = [
+  { datename: "Mon", cashier: 1, voids: 12 },
+  { datename: "Mon", cashier: 2, voids: 2.75 },
+  { datename: "Mon", cashier: 3, voids: 21 },
+  { datename: "Mon", cashier: 4, voids: 15.75 },
+  { namename: "Mon", cashier: 5, voids: 6.25 },
+  { datename: "Mon", cashier: 6, voids: 5 },
+  { datename: "Mon", cashier: 7, voids: 8.47 },
+  { datename: "Mon", cashier: 8, voids: 7.68 },
+  { datename: "Mon", cashier: 9, voids: 3.15 },
+  { datename: "Mon", cashier: 10, voids: 9.75 },
+  { datename: "Tue", cashier: 1, voids: 1.13 },
+  { datename: "Tue", cashier: 2, voids: 6.25 },
+  { datename: "Tue", cashier: 3, voids: 3.63 },
+  { datename: "Tue", cashier: 4, voids: 1.89 },
+  { datename: "Tue", cashier: 5, voids: 18.21 },
+  { datename: "Tue", cashier: 6, voids: 7.21 },
+  { datename: "Tue", cashier: 2, voids: 9.24 },
+];

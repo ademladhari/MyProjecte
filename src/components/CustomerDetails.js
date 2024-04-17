@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   Image,
@@ -27,6 +28,7 @@ const CustomerDetails = (prop) => {
       }}
     />
   );
+  const navigation = useNavigation(); // Get the navigation object
 
   const handleCallPress = () => {
     Linking.openURL(`tel:${number}`);
@@ -66,7 +68,7 @@ const CustomerDetails = (prop) => {
       <View className="h-[30%] w-[100%] mb-1 flex flex-row">
         <View className="flex w-[83%] flex-col p-5  ">
           <Text className="text-lg text-[#acacac]">Delivery Address</Text>
-          <TouchableOpacity onPress={() => _goToYosemite(Address)}>
+          <TouchableOpacity onPress={() => navigation.navigate("map")}>
             <Text className="text-sm  w-[80%] whitespace-nowrap overflow-x-scroll h-[40px] ">
               {Address}
             </Text>
