@@ -161,7 +161,7 @@ export default function HomePage({ navigation }) {
         }}
       >
         <TouchableOpacity
-          onPress={() => navigation.navigate("Notification")}
+          onPress={() => navigation.navigate("QRCodeScanner", { userID })}
           style={{
             backgroundColor: "#3498db",
             padding: 5,

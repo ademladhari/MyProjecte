@@ -7,7 +7,7 @@ export const getApi = axios.create({
   withCredentials: true,
 });
 export const getApiAuth = axios.create({
-  baseURL: "http://192.168.0.4:3000/api/auth/",
+  baseURL: "http://192.168.0.4:3000/api/mobileAuth/",
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });
