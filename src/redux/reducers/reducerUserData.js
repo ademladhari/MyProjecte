@@ -1,15 +1,16 @@
-import { FETCH_MEDICATIONS } from "../store/types ";
+import { fetchUserData } from "../actions/actionUserData";
+import { FETCH_MEDICATIONS, FETCH_USERDATA } from "../store/types ";
 
 const initialState = {
-  demandes: {},
+  UserData: {},
 };
 
 const userDataReducer = (state = initialState, action) => {
   switch (action.type) {
-    case FETCH_MEDICATIONS:
+    case FETCH_USERDATA:
       return {
         ...state,
-        demandes: action.payload.demandes,
+        UserData: action.payload,
       };
     default:
       return state;

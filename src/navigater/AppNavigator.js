@@ -110,18 +110,6 @@ const CustomDrawerContent = () => {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigateToScreen("Notification")}>
-          <DrawerItem
-            label=""
-            icon={({ color, size }) => (
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Ionicons name="notifications" color={color} size={size} />
-                <Text style={{ marginLeft: 10 }}>Notification</Text>
-              </View>
-            )}
-            style={{ marginLeft: 5 }}
-          />
-        </TouchableOpacity>
         <TouchableOpacity onPress={() => navigateToScreen("Profile")}>
           <DrawerItem
             label=""

@@ -11,7 +11,7 @@ import {
   ScrollY,
 } from "react-native";
 import Carddelivery from "../components/Carddelivery";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { fetchMedications } from "../redux/actions/actiondata";
@@ -23,13 +23,19 @@ import {
 import { ShowCheckedIdsButton } from "../components/checkedbutton";
 import SearchBar from "../components/search-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchUserData } from "../redux/actions/actionUserData";
+import { CountContext } from "../../App";
+import { NotificationHistoryData } from "../services/Notificaiton";
 
 export default function PendingPage({ navigation }) {
   const currentDate = new Date();
   const [checkedCards, setCheckedCards] = useState([]);
   const [showCheckbox, setshowCheckbox] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
-  const [filteredDemandes, setfilteredDemandes] = useState([]);
+  const [filteredDemandes, setfilteredDemandes] = useState(
+    demandes ? demandes : []
+  );
+
   const [userID, setUserID] = useState(null);
   const [searchBy, setSearchBy] = useState("requestName");
   // Format date as desired (e.g., "February 28, 2024")
@@ -69,14 +75,16 @@ export default function PendingPage({ navigation }) {
   const [lastDemandeID, setLastDemandeID] = useState(0);
   const dispatch = useDispatch();
 
-  const demandes = useSelector((state) => state.demandes.demandes);
+  const demandes = useSelector((state) => state.userData.UserData);
+  console.log("demandes,", demandes);
   const resetCheckBoxs = () => {
     setCheckedCards([]);
   };
   useEffect(() => {
     const fetchData = async () => {
       try {
-        dispatch(fetchMedications()); // This line should dispatch the action
+        console.log("ysers", userID);
+        dispatch(fetchUserData(userID));
         // Make sure you are getting the data from the action
         console.log("Action dispatched successfully");
       } catch (error) {
@@ -84,7 +92,7 @@ export default function PendingPage({ navigation }) {
       }
     };
     fetchData();
-  }, [dispatch]);
+  }, [dispatch, userID]);
   useEffect(() => {
     // Filter demandes based on the search query and selected category
     if (demandes) {
@@ -103,7 +111,6 @@ export default function PendingPage({ navigation }) {
     // Filter demandes based on the search query and selected category
     if (demandes) {
       let filterd = demandes;
-      console.log(searchBy);
       if (searchQuery.trim() !== "") {
         if (searchBy === "requestName") {
           filterd = filterd.filter((demande) =>
@@ -165,11 +172,10 @@ export default function PendingPage({ navigation }) {
           searchBy={searchBy}
         ></SearchBar>
         <ScrollView className="h-[30%] ">
-          {demandes !== null && demandes.length > 0 ? (
+          {demandes !== null && filteredDemandes.length > 0 ? (
             filteredDemandes.map(
               (demande, index) =>
-                demande.Status === "collecté" &&
-                demande.agentUserID === userID && (
+                demande.Status === "affecté" && (
                   <View className="h-[90px] my-3">
                     <TouchableOpacity
                       key={index}
@@ -208,12 +214,13 @@ export default function PendingPage({ navigation }) {
           )}
         </ScrollView>
       </TouchableOpacity>
-      {console.log(showCheckbox)}
       {showCheckbox && (
         <ShowCheckedIdsButton
           checkedIds={checkedCards}
+          marginbottom={"mb-2"}
+          state={"collecté"}
           onPress={() => {
-            handleShowCheckedIds(checkedCards, dispatch, "affecté");
+            handleShowCheckedIds(checkedCards, dispatch, "collecté");
             updateStatusForChecked();
             resetCheckBoxs();
           }}
@@ -231,3 +238,17 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent", // Set background color to transparent to see the gradient
   },
 });
+function CollectedCount(demandes) {
+  if (!demandes || !Array.isArray(demandes)) return 0;
+
+  return demandes.reduce((count, demande) => {
+    return demande.Status === "collecté" ? count + 1 : count;
+  }, 0);
+}
+function PendingCount(demandes) {
+  if (!demandes || !Array.isArray(demandes)) return 0;
+
+  return demandes.reduce((count, demande) => {
+    return demande.Status === "affecté" ? count + 1 : count;
+  }, 0);
+}

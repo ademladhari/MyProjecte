@@ -2,11 +2,13 @@ import { useDispatch } from "react-redux";
 import { login } from "../../services/AuthLogin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native"; // Import Alert from react-native
-import { getUserData } from "./ActionUser";
+import * as Notifications from "expo-notifications";
+import { Platform } from "react-native";
 import * as Device from "expo-device";
-import { useRef, useState } from "react";
-
-import { registerForPushNotificationsAsync } from "../../../App";
+import {
+  NotificationTokenDelete,
+  NotificationTokenPost,
+} from "../../services/Notificaiton";
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAILURE = "LOGIN_FAILURE";
@@ -24,7 +26,12 @@ export const loginUser = (username, password) => {
     try {
       const { token, user } = await login(username, password);
       // Store token in AsyncStorage
-      await AsyncStorage.setItem("token", token);
+      await AsyncStorage.setItem("userData", JSON.stringify(user)); // Convert user object to a string
+
+      registerForPushNotificationsAsync().then((expotoken) => {
+        NotificationTokenPost(user.UserID, expotoken);
+        AsyncStorage.setItem("notficationtoken", expotoken);
+      });
 
       dispatch({
         type: LOGIN_SUCCESS,
@@ -70,6 +77,8 @@ export const logoutUser = () => {
       // Remove token from AsyncStorage
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("userData");
+      const token = await AsyncStorage.getItem("notficationtoken");
+      NotificationTokenDelete(token);
 
       dispatch({ type: LOGOUT_SUCCESS });
       // Show success alert
@@ -91,23 +100,40 @@ const showAlert = (message) => {
     { cancelable: false }
   );
 };
-const storePushToken = async (userData) => {
-  if (!Device.isDevice) {
-    return;
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
   }
-  const token = (
-    await Notifications.getExpoPushTokenAsync({
-      projectId: "9675060f-ce94-49c2-af77-09e9b5674ec5",
-    })
-  ).data;
-  const tokenData = userData.pushTokens || {};
-  const tokenArray = Object.values(tokenData);
-  if (tokenArray.includes(token)) {
-    return;
+
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    // Learn more about projectId:
+    // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
+    token = (
+      await Notifications.getExpoPushTokenAsync({
+        projectId: "9675060f-ce94-49c2-af77-09e9b5674ec5",
+      })
+    ).data;
+  } else {
+    alert("Must use physical device for Push Notifications");
   }
-  tokenArray.push(token);
-  for (let i = 0; i < tokenArray.length; i++) {
-    const tok = tokenArray[i];
-    tokenData[i] = tok;
-  }
-};
+
+  return token;
+}

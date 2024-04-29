@@ -1,59 +1,79 @@
 import React, { useState, useEffect } from "react";
 import { Button, View, Alert } from "react-native";
-import MapView, { Marker, Polyline } from "react-native-maps";
+import MapView, { Marker as MapMarker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
 
 export default function Map() {
   const [currentLocation, setCurrentLocation] = useState(null);
-  const [destination, setDestination] = useState({
-    latitude: 35.82364,
-    longitude: 10.64142,
-  });
-  var requestOptions = {
-    method: "GET",
-  };
+  const [destination, setDestination] = useState(null);
+  const [routeCoordinates, setRouteCoordinates] = useState([]);
+
+  useEffect(() => {
+    async function fetchRoute() {
+      if (currentLocation && destination) {
+        const { latitude, longitude } = currentLocation;
+        const apiKey =
+          "pk.eyJ1Ijoic2FpZm1zayIsImEiOiJjbHVyZnUzbmkwODJrMnJwYWZyem0ybXNoIn0.aSQunMAR3GWfJpVBaJkaEg"; // Replace with your actual Mapbox API key
+        const apiUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${longitude},${latitude};${destination.longitude},${destination.latitude}?geometries=geojson&access_token=${apiKey}`;
+        try {
+          const response = await fetch(apiUrl);
+          const data = await response.json();
+          if (data.routes.length) {
+            const coordinates = data.routes[0].geometry.coordinates.map(
+              (coord) => ({
+                latitude: coord[1],
+                longitude: coord[0],
+              })
+            );
+            setRouteCoordinates(coordinates);
+          }
+        } catch (error) {
+          console.error("Error fetching route:", error);
+        }
+      }
+    }
+    fetchRoute();
+  }, [currentLocation, destination]);
+
   useEffect(() => {
     const fetchDestinationCoordinates = async () => {
-      const street = "Rue Ali Ben Ayed";
-      const country = "tunisia akouda";
-      const apiUrl = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
-        street
-      )},${encodeURIComponent(
-        country
-      )}&apiKey=d7be5b465aef40c8845abda45ffd0583`;
+      const placeName =
+        "Institut Supérieur d'Informatique et des Technologies de Communication";
+      const locality = "Hammam Sousse"; // More specific locality
+      const country = "tunisia";
+      const apiKey = "61c5418d7de145818eee5865cf68d51e"; // Use your actual OpenCage API key
+      const apiUrl = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
+        placeName + ", " + locality + ", " + country
+      )}&key=${apiKey}`;
 
       try {
+        console.log("Requesting:", apiUrl); // Check the complete URL
         const response = await fetch(apiUrl);
         const data = await response.json();
-        setDestination({
-          latitude: data.features[0].geometry.coordinates[1],
-          longitude: data.features[0].geometry.coordinates[0],
-        });
+        console.log("Response:", data); // Check the raw response
+        if (data.results && data.results.length > 0) {
+          const { lat, lng } = data.results[0].geometry;
+          setDestination({
+            latitude: lat,
+            longitude: lng,
+          });
+        } else {
+          console.error("No results found or error in response:", data);
+          Alert.alert(
+            "Geocoding Error",
+            "No results found. Please check the place name and try again."
+          );
+        }
       } catch (error) {
         console.error("Error fetching destination coordinates:", error);
+        Alert.alert(
+          "API Error",
+          "Failed to fetch destination coordinates. Check console for more details."
+        );
       }
     };
-
     fetchDestinationCoordinates();
   }, []);
-  const startPoint = "tunisia akouda";
-  const endPoint = "tunisia akouda Rue Ali Ben Ayed";
-
-  // Construct the URL with variables
-  const apiUrl = `https://api.geoapify.com/v1/routing?waypoints=${encodeURIComponent(
-    startPoint
-  )}|${encodeURIComponent(
-    endPoint
-  )}&mode=drive&apiKey=d7be5b465aef40c8845abda45ffd0583`;
-
-  // Fetch data using the constructed URL
-  fetch(
-    "https://api.geoapify.com/v1/routing?waypoints=50.96209827745463%2C4.414458883409225%7C50.429137079078345%2C5.00088081232559&mode=drive&apiKey=d7be5b465aef40c8845abda45ffd0583",
-    requestOptions
-  )
-    .then((response) => response.json())
-    .then((result) => console.log(result))
-    .catch((error) => console.log("error", error));
 
   const requestLocationPermission = async () => {
     try {
@@ -73,10 +93,15 @@ export default function Map() {
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
       if (status === "granted") {
-        const { coords } = await Location.getCurrentPositionAsync({});
+        const options = {
+          accuracy: Location.Accuracy.BestForNavigation,
+          timeout: 5000,
+          maximumAge: 0,
+        };
+        const location = await Location.getCurrentPositionAsync(options);
         setCurrentLocation({
-          latitude: coords.latitude,
-          longitude: coords.longitude,
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
         });
       } else {
         Alert.alert(
@@ -86,21 +111,10 @@ export default function Map() {
       }
     } catch (error) {
       console.error("Error fetching current location:", error);
-    }
-  };
-
-  const simulateRoute = () => {
-    if (currentLocation) {
-      // Simulate a route by drawing a straight line between current location and destination
-      return [
-        {
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
-        },
-        { latitude: destination.latitude, longitude: destination.longitude },
-      ];
-    } else {
-      return [];
+      Alert.alert(
+        "Location Error",
+        "Failed to fetch current location. Please ensure your location settings are enabled and try again."
+      );
     }
   };
 
@@ -109,19 +123,21 @@ export default function Map() {
       <MapView
         style={{ flex: 1 }}
         initialRegion={{
-          latitude: destination.latitude,
-          longitude: destination.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          latitude: 34.0,
+          longitude: 9.0,
+          latitudeDelta: 5.0,
+          longitudeDelta: 5.0,
         }}
       >
-        {currentLocation && (
-          <Marker coordinate={currentLocation} title="Current Location" />
+        {currentLocation && <MapMarker coordinate={currentLocation} />}
+        {destination && (
+          <MapMarker coordinate={destination} title="Destination" />
         )}
-        <Marker coordinate={destination} title="Destination" />
-        {currentLocation && (
-          <Polyline coordinates={simulateRoute()} strokeWidth={4} />
-        )}
+        <Polyline
+          coordinates={routeCoordinates}
+          strokeWidth={4}
+          strokeColor="red"
+        />
       </MapView>
       <Button title="Get Current Location" onPress={getCurrentLocation} />
     </View>

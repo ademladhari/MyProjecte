@@ -1,12 +1,13 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 
-const Notifications = ({ props }) => {
-  // const {message,demandID}= props  ////// add date later
+const NotificationCard = ({ message, date }) => {
+  console.log("here");
+
   return (
-    <View className="h-screen w-full    ">
-      <View className="lg:w-2/5 sm:w-3/5 w-[full] bg-gray-100  rounded-xl mx-auto  m-4 shadow-sm">
-        <View className="mt-2 p-3 h-[35%]  py-4 flex flex-row bg-white rounded-lg shadow w-full">
+    <View className=" w-full    ">
+      <View className="lg:w-2/5 sm:w-3/5 w-[full] bg-gray-100  rounded-xl mx-auto  m-4 shadow-sm h-[70px]">
+        <View className="mt-2 p-3    py-4 flex flex-row bg-white rounded-lg shadow w-full">
           <Image
             source={{
               uri: "https://cdn-icons-png.flaticon.com/512/893/893257.png",
@@ -14,9 +15,9 @@ const Notifications = ({ props }) => {
             style={{ width: 30, height: 30, marginRight: 13, marginTop: 16 }}
           />
           <View style={{ flex: 1 }}>
-            <Text className="mt-1 text-sm flex-wrap w-[90%]"></Text>
+            <Text className="mt-1 text-sm flex-wrap w-[90%]"> {message}</Text>
             <Text style={{ fontSize: 12, color: "gray", marginTop: 5 }}>
-              March 3, 2024 {/* Add your desired date here */}
+              {date}
             </Text>
           </View>
         </View>
@@ -25,4 +26,4 @@ const Notifications = ({ props }) => {
   );
 };
 
-export default Notifications;
+export default NotificationCard;

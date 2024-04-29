@@ -1,24 +1,53 @@
 import React, { useEffect, useState } from "react";
-import { Button, Text, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import ProfileSetting from "../components/Profile-Setting";
-import AdressCard from "../components/adress-card";
-import Buttom from "../components/Buttom";
-import { logoutUser } from "../redux/actions/actionAuth";
+import { Dimensions, ScrollView, Text, View } from "react-native";
+import { NotificationHistoryData } from "../services/Notificaiton";
 import NotificationCard from "../components/notification-card";
 
 export default function NotificationsPage({ navigation }) {
-  // Empty dependency array ensures the effect runs only once when the component mounts
+  const [notificationData, setNotificationData] = useState([]);
+  const [error, setError] = useState("");
+
+  const { fontScale } = Dimensions.get("window");
+  useEffect(() => {
+    NotificationHistoryData()
+      .then((data) => {
+        if (!data.notifications || !Array.isArray(data.notifications)) {
+          setError("Invalid notification data");
+          return;
+        }
+        console.log("data", data.notifications);
+        setNotificationData(data.notifications);
+      })
+      .catch((error) => {
+        console.error("Error fetching notifications:", error);
+        setError("Failed to load notifications");
+      });
+  }, []);
+
+  if (error) {
+    return (
+      <View>
+        <Text>There was a problem fetching notifications.</Text>
+      </View>
+    );
+  }
 
   return (
     <View>
-      <View>
-        <Text className="text-3xl ml-2 mt-2">Notification</Text>
-      </View>
-      <View>
-        <NotificationCard></NotificationCard>
-      </View>
+      {console.log(notificationData)}
+      <ScrollView className="h-[93%]">
+        {notificationData.length > 0 && notificationData !== undefined ? (
+          notificationData.map((data) => (
+            <NotificationCard
+              key={data.notificationHistoryID}
+              message={data.Message}
+              date={data.CreatedDate}
+            />
+          ))
+        ) : (
+          <Text>No notifications to display.</Text>
+        )}
+      </ScrollView>
     </View>
   );
 }

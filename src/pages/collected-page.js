@@ -11,10 +11,9 @@ import {
   ScrollY,
 } from "react-native";
 import Carddelivery from "../components/Carddelivery";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { data, userData } from "../services/ServiceData";
 import { fetchMedications } from "../redux/actions/actiondata";
 import { getStatusAddress, getStatusLabName } from "../utils/api/functions";
 import {
@@ -24,15 +23,19 @@ import {
 import { ShowCheckedIdsButton } from "../components/checkedbutton";
 import SearchBar from "../components/search-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchUserData } from "../redux/actions/actionUserData";
+import { CountContext } from "../../App";
 
-export default function DeliveryPage({ navigation }) {
+export default function PendingPage({ navigation }) {
   const currentDate = new Date();
   const [checkedCards, setCheckedCards] = useState([]);
   const [showCheckbox, setshowCheckbox] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
-  const [filteredDemandes, setfilteredDemandes] = useState([]);
-  const [userID, setUserID] = useState(null);
+  const [filteredDemandes, setfilteredDemandes] = useState(
+    demandes ? demandes : []
+  );
 
+  const [userID, setUserID] = useState(null);
   const [searchBy, setSearchBy] = useState("requestName");
   // Format date as desired (e.g., "February 28, 2024")
   const formattedDate = currentDate.toLocaleDateString("en-EUROPE", {
@@ -41,6 +44,18 @@ export default function DeliveryPage({ navigation }) {
     month: "long",
     year: "numeric",
   });
+  const updateStatusForChecked = () => {
+    // Update filteredDemandes after modifying them
+    console.log(checkedCards);
+    const updatedFilteredDemandes = demandes.map((demande) => {
+      console.log(demande.DemandID);
+      if (checkedCards.includes(demande.DemandID)) {
+        return { ...demande, Status: "collecté" };
+      }
+      return demande;
+    });
+    setfilteredDemandes(updatedFilteredDemandes);
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -55,30 +70,19 @@ export default function DeliveryPage({ navigation }) {
 
     fetchUserData();
   }, []);
-  const updateStatusForChecked = () => {
-    // Update filteredDemandes after modifying them
-    console.log(checkedCards);
-    const updatedFilteredDemandes = demandes.map((demande) => {
-      console.log(demande.DemandID);
-      if (checkedCards.includes(demande.DemandID)) {
-        return { ...demande, Status: "livre" };
-      }
-      return demande;
-    });
-    setfilteredDemandes(updatedFilteredDemandes);
-  };
   const [lastPress, setLastPress] = useState(0);
   const [lastDemandeID, setLastDemandeID] = useState(0);
   const dispatch = useDispatch();
 
-  const demandes = useSelector((state) => state.demandes.demandes);
+  const demandes = useSelector((state) => state.userData.UserData);
+  console.log("demandes,", demandes);
   const resetCheckBoxs = () => {
     setCheckedCards([]);
   };
   useEffect(() => {
     const fetchData = async () => {
       try {
-        dispatch(fetchMedications()); // This line should dispatch the action
+        dispatch(fetchUserData(userID));
         // Make sure you are getting the data from the action
         console.log("Action dispatched successfully");
       } catch (error) {
@@ -86,7 +90,7 @@ export default function DeliveryPage({ navigation }) {
       }
     };
     fetchData();
-  }, [dispatch]);
+  }, [dispatch, userID]);
   useEffect(() => {
     // Filter demandes based on the search query and selected category
     if (demandes) {
@@ -105,7 +109,6 @@ export default function DeliveryPage({ navigation }) {
     // Filter demandes based on the search query and selected category
     if (demandes) {
       let filterd = demandes;
-      console.log(searchBy);
       if (searchQuery.trim() !== "") {
         if (searchBy === "requestName") {
           filterd = filterd.filter((demande) =>
@@ -167,11 +170,10 @@ export default function DeliveryPage({ navigation }) {
           searchBy={searchBy}
         ></SearchBar>
         <ScrollView className="h-[30%] ">
-          {demandes !== null && demandes.length > 0 ? (
+          {demandes !== null && filteredDemandes.length > 0 ? (
             filteredDemandes.map(
               (demande, index) =>
-                demande.Status === "collecté" &&
-                demande.agentUserID === userID && (
+                demande.Status === "collecté" && (
                   <View className="h-[90px] my-3">
                     <TouchableOpacity
                       key={index}
@@ -210,10 +212,11 @@ export default function DeliveryPage({ navigation }) {
           )}
         </ScrollView>
       </TouchableOpacity>
-      {console.log(showCheckbox)}
       {showCheckbox && (
         <ShowCheckedIdsButton
           checkedIds={checkedCards}
+          marginbottom={"mb-2"}
+          state={"livre"}
           onPress={() => {
             handleShowCheckedIds(checkedCards, dispatch, "livre");
             updateStatusForChecked();

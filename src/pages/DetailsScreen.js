@@ -112,7 +112,7 @@ export default function DetailsScreen({ route, navigation }) {
       <View className="h-[35%]">
         {userData && (
           <CustomerDetails
-            number={updateDemande.DepartureTelMobile}
+            number={updateDemande.DeparturePhoneNumber}
             Address={getStatusAddressForMap(updateDemande)}
             name={getStatusLabName(updateDemande)}
             statusdate={updateDemande.Statusdate}

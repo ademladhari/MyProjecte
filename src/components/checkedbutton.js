@@ -2,28 +2,30 @@ import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 
 // Button component to display the IDs
-export const ShowCheckedIdsButton = ({ checkedIds, onPress }) => {
+export const ShowCheckedIdsButton = ({
+  checkedIds,
+  onPress,
+  state,
+  marginbottom,
+}) => {
   return (
-    <View style={styles.container}>
+    <View className={`${marginbottom}`}>
+      {console.log(marginbottom)}
       <TouchableOpacity onPress={onPress} style={styles.buttonContainer}>
-        <Text style={styles.buttonText}>Show Checked IDs</Text>
+        <Text style={styles.buttonText}>change to {state}</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 30,
-  },
   buttonContainer: {
     backgroundColor: "blue",
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
-    marginBottom: 30,
     position: "relative",
-    top: -17,
+    top: 14,
   },
   buttonText: {
     color: "white",

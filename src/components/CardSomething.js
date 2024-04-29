@@ -5,16 +5,8 @@ import { KeyboardAvoidingView, TouchableOpacity } from "react-native";
 import { Image, Text, View } from "react-native";
 
 const CardSomething = (prop) => {
-  const {
-    img,
-    number,
-    deliveredOrPending,
-    color,
-    name,
-    colorText,
-    page,
-    userID,
-  } = prop;
+  const { number, deliveredOrPending, color, name, colorText, page, userID } =
+    prop;
   const navigation = useNavigation(); // Get the navigation object
 
   return (

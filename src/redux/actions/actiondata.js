@@ -1,11 +1,11 @@
 import { data, fetchData } from "../../services/ServiceData"; // Assuming you renamed the function to fetchData
 import { FETCH_MEDICATIONS } from "../store/types ";
 // Action Creator for fetching medications
-export const fetchMedications = () => {
+export const fetchMedications = (page) => {
   return async (dispatch) => {
     try {
       // Fetch medications data using the fetchData function
-      const response = await data();
+      const response = await data(page);
 
       // Dispatch the action with the medications data
       dispatch({
