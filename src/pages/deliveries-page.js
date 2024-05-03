@@ -11,6 +11,7 @@ import {
   ScrollY,
   FlatList,
   KeyboardAvoidingView,
+  RefreshControl,
 } from "react-native";
 import Carddelivery from "../components/Carddelivery";
 import { useEffect, useState } from "react";
@@ -40,28 +41,31 @@ export default function DeliveryPage({ navigation }) {
 
   const updateStatusForChecked = () => {
     // Update filteredDemandes after modifying them
-    console.log(checkedCards);
-    const updatedFilteredDemandes = demandes.map((demande) => {
-      console.log(demande.DemandID);
+    const updatedFilteredDemandes = filteredDemandes.map((demande) => {
       if (checkedCards.includes(demande.DemandID)) {
-        return { ...demande, Status: "affecté" };
+        return { ...demande, Status: "affected" };
       }
       return demande;
     });
     setfilteredDemandes(updatedFilteredDemandes);
   };
-  const [lastPress, setLastPress] = useState(0);
   const [page, setPage] = useState(1);
   const [demandes, setDemandes] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [lastDemandeID, setLastDemandeID] = useState(0);
+  const onRefresh = () => {
+    setRefreshing(true);
+    resetCheckBoxs();
+    // Simulate refreshing the page
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
   const dispatch = useDispatch();
 
   const newdm = useSelector((state) => state.demandes.demandes);
   useEffect(() => {
     // Log the type and content of newdm for debugging
-    console.log("Type of newdm:", typeof newdm);
-    console.log("Content of newdm:", newdm);
 
     // Ensure newdm is an array before proceeding
     if (!Array.isArray(newdm) || newdm.length === 0) {
@@ -69,7 +73,6 @@ export default function DeliveryPage({ navigation }) {
       return; // Skip the effect if newdm is not an array or if it's empty
     }
 
-    console.log("Fetched new demandes:", newdm);
     setDemandes((prevDemandes) => {
       const existingIDs = new Set(prevDemandes.map((item) => item.DemandID));
       const newItems = newdm.filter((item) => !existingIDs.has(item.DemandID));
@@ -94,8 +97,9 @@ export default function DeliveryPage({ navigation }) {
         return [...prevDemandes, ...newItems]; // Only add new items that aren't already in the state
       });
     }
-  }, [page, demandes]);
+  }, [page, demandes, refreshing]);
   const resetCheckBoxs = () => {
+    setshowCheckbox(false);
     setCheckedCards([]);
   };
   const fetchData = async (pageNum) => {
@@ -112,7 +116,7 @@ export default function DeliveryPage({ navigation }) {
 
   useEffect(() => {
     fetchData(page);
-  }, [page]);
+  }, [page, refreshing]);
 
   useEffect(() => {
     // Filter demandes based on the search query and selected category
@@ -136,6 +140,7 @@ export default function DeliveryPage({ navigation }) {
       console.log(searchBy);
       if (searchQuery.trim() !== "") {
         if (searchBy === "requestName") {
+          console.log(searchQuery);
           filterd = filterd.filter((demande) =>
             demande.requestName
               .toLowerCase()
@@ -147,9 +152,11 @@ export default function DeliveryPage({ navigation }) {
               searchQuery.toLowerCase()
             )
           );
-        } else if (searchBy === "name") {
+        } else if (searchBy === "ArrivalAddress") {
           filterd = filterd.filter((demande) =>
-            demande.name.toLowerCase().includes(searchQuery.toLowerCase())
+            demande.ArrivalAddress.toLowerCase().includes(
+              searchQuery.toLowerCase()
+            )
           );
         }
       }
@@ -159,32 +166,18 @@ export default function DeliveryPage({ navigation }) {
     }
   }, [demandes, searchQuery, searchBy]);
   const handleDoublePress = (demande) => {
-    const currentTime = new Date().getTime();
-    const delta = currentTime - lastPress;
-
-    // Check if the current demande is the same as the last one and the time between presses is less than 500 milliseconds
-    if (demande.DemandID === lastDemandeID && delta < 500) {
-      // Time between two presses is less than 500 milliseconds, consider it a double press
-      handleCheckBoxPress(demande.DemandID, checkedCards, setCheckedCards);
-      setshowCheckbox(true);
-      navigation.navigate("DetailsScreen", {
-        demande: demande,
-      });
-    } else {
-      handleCheckBoxPress(demande.DemandID, checkedCards, setCheckedCards);
-      setshowCheckbox(true);
-    }
-
-    // Store the current demande ID and time of press
-    setLastDemandeID(demande.DemandID);
-    setLastPress(currentTime);
+    navigation.navigate("DetailsScreen", {
+      demande: demande,
+      setdemandes: setfilteredDemandes,
+      page: "Delivery",
+    });
   };
 
   // Update filtered demandes when demandes change
 
   const handleScrollToEnd = () => {
     // Load next page if not already loading and there is more data
-    if (!loading) {
+    if (!loading && searchQuery === "") {
       setPage(page + 1);
     }
   };
@@ -234,6 +227,9 @@ export default function DeliveryPage({ navigation }) {
           searchBy={searchBy}
         ></SearchBar>
         <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           data={filteredDemandes} // Pass the data array to FlatList
           keyExtractor={(item) => item.DemandID.toString()} // Provide a unique key extractor
           renderItem={(
@@ -241,8 +237,8 @@ export default function DeliveryPage({ navigation }) {
           ) => (
             <View className="h-[90px] my-3">
               <TouchableOpacity
-                onPress={() => handleDoublePress(item)}
-                onLongPress={() => {
+                onLongPress={() => handleDoublePress(item)}
+                onPress={() => {
                   handleCheckBoxPress(
                     item.DemandID,
                     checkedCards,
@@ -278,7 +274,7 @@ export default function DeliveryPage({ navigation }) {
         <ShowCheckedIdsButton
           checkedIds={checkedCards}
           onPress={() => {
-            handleShowCheckedIds(checkedCards, dispatch, "affecté");
+            handleShowCheckedIds(checkedCards, dispatch, "affected");
             updateStatusForChecked();
             resetCheckBoxs();
           }}

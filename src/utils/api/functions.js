@@ -1,6 +1,6 @@
 export const getStatusAddressForMap = (demande) => {
   switch (demande.Status) {
-    case "collecté":
+    case "collected":
       return (
         demande.ArrivalGovernorate +
         "," +
@@ -8,7 +8,7 @@ export const getStatusAddressForMap = (demande) => {
         "," +
         demande.ArrivalAddress
       );
-    case "affecté":
+    case "affected":
       return (
         demande.DepartureGovernorate +
         "," +
@@ -24,7 +24,7 @@ export const getStatusAddressForMap = (demande) => {
         "," +
         demande.DepartureAddress
       );
-    case "livre":
+    case "livrer":
       return (
         demande.ArrivalGovernorate +
         "," +
@@ -35,38 +35,61 @@ export const getStatusAddressForMap = (demande) => {
     case "canceled":
       return "Address for canceled";
     default:
-      return "";
+      return (
+        demande.ArrivalGovernorate +
+        "," +
+        demande.ArrivalCity +
+        "," +
+        demande.ArrivalAddress
+      );
+  }
+};
+export const getCoordinatesForMap = (demande) => {
+  console.log("heh", demande.DepartureCoordinates);
+  switch (demande.Status) {
+    case "collected":
+      return demande.ArrivalCoordinates;
+    case "affected":
+      return demande.DepartureCoordinates;
+    case "en cours":
+      return demande.DepartureCoordinates;
+    case "livre":
+      return demande.ArrivalCoordinates;
+    case "canceled":
+      return "Address for canceled";
+    default:
+      return demande.ArrivalCoordinates;
   }
 };
 export const getStatusAddress = (demande) => {
   switch (demande.Status) {
     case "en cours":
       return demande.DepartureGovernorate + "," + demande.DepartureCity;
-    case "affecté":
+    case "affected":
       return demande.DepartureGovernorate + "," + demande.DepartureCity;
-    case "collecté":
+    case "collected":
       return demande.ArrivalGovernorate + "," + demande.ArrivalCity;
-    case "livre":
+    case "livrer":
       return demande.ArrivalGovernorate + "," + demande.ArrivalCity;
     case "canceled":
       return "Address for canceled";
     default:
-      return "";
+      return demande.ArrivalGovernorate + "," + demande.ArrivalCity;
   }
 };
 export const getStatusLabName = (demande) => {
   switch (demande.Status) {
     case "en cours":
       return demande.DepartureLabName;
-    case "affecté":
+    case "affected":
       return demande.DepartureLabName;
-    case "collecté":
+    case "collected":
       return demande.ArrivalLabName;
-    case "livre":
+    case "livrer":
       return demande.ArrivalLabName;
     case "canceled":
       return "canceled";
     default:
-      return "";
+      return demande.ArrivalLabName;
   }
 };

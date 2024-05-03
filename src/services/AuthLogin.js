@@ -4,7 +4,7 @@ import { getApiAuth } from "../utils/api/api";
 export const login = async (email, password) => {
   try {
     const response = await getApiAuth.post(
-      "login",
+      "mobileAuth",
       {
         email,
         password,

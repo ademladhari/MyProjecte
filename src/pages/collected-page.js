@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
   ScrollY,
+  RefreshControl,
 } from "react-native";
 import Carddelivery from "../components/Carddelivery";
 import { useContext, useEffect, useState } from "react";
@@ -47,10 +48,10 @@ export default function PendingPage({ navigation }) {
   const updateStatusForChecked = () => {
     // Update filteredDemandes after modifying them
     console.log(checkedCards);
-    const updatedFilteredDemandes = demandes.map((demande) => {
+    const updatedFilteredDemandes = filteredDemandes.map((demande) => {
       console.log(demande.DemandID);
       if (checkedCards.includes(demande.DemandID)) {
-        return { ...demande, Status: "collecté" };
+        return { ...demande, Status: "livre" };
       }
       return demande;
     });
@@ -69,14 +70,24 @@ export default function PendingPage({ navigation }) {
     };
 
     fetchUserData();
-  }, []);
+  }, [refreshing]);
   const [lastPress, setLastPress] = useState(0);
   const [lastDemandeID, setLastDemandeID] = useState(0);
   const dispatch = useDispatch();
+  const [refreshing, setRefreshing] = useState(false);
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    resetCheckBoxs();
+    // Simulate refreshing the page
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
   const demandes = useSelector((state) => state.userData.UserData);
   console.log("demandes,", demandes);
   const resetCheckBoxs = () => {
+    setshowCheckbox(false);
     setCheckedCards([]);
   };
   useEffect(() => {
@@ -122,9 +133,11 @@ export default function PendingPage({ navigation }) {
               searchQuery.toLowerCase()
             )
           );
-        } else if (searchBy === "name") {
+        } else if (searchBy === "ArrivalAddress") {
           filterd = filterd.filter((demande) =>
-            demande.name.toLowerCase().includes(searchQuery.toLowerCase())
+            demande.ArrivalAddress.toLowerCase().includes(
+              searchQuery.toLowerCase()
+            )
           );
         }
       }
@@ -134,25 +147,11 @@ export default function PendingPage({ navigation }) {
     }
   }, [demandes, searchQuery, searchBy]);
   const handleDoublePress = (demande) => {
-    const currentTime = new Date().getTime();
-    const delta = currentTime - lastPress;
-
-    // Check if the current demande is the same as the last one and the time between presses is less than 500 milliseconds
-    if (demande.DemandID === lastDemandeID && delta < 500) {
-      // Time between two presses is less than 500 milliseconds, consider it a double press
-      handleCheckBoxPress(demande.DemandID, checkedCards, setCheckedCards);
-      setshowCheckbox(true);
-      navigation.navigate("DetailsScreen", {
-        demande: demande,
-      });
-    } else {
-      handleCheckBoxPress(demande.DemandID, checkedCards, setCheckedCards);
-      setshowCheckbox(true);
-    }
-
-    // Store the current demande ID and time of press
-    setLastDemandeID(demande.DemandID);
-    setLastPress(currentTime);
+    navigation.navigate("DetailsScreen", {
+      demande: demande,
+      setdemandes: setfilteredDemandes,
+      page: "collected",
+    });
   };
   return (
     <>
@@ -169,16 +168,21 @@ export default function PendingPage({ navigation }) {
           setSearchQuery={setSearchQuery}
           searchBy={searchBy}
         ></SearchBar>
-        <ScrollView className="h-[30%] ">
+        <ScrollView
+          className="h-[30%] "
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           {demandes !== null && filteredDemandes.length > 0 ? (
             filteredDemandes.map(
               (demande, index) =>
-                demande.Status === "collecté" && (
+                demande.Status === "collected" && (
                   <View className="h-[90px] my-3">
                     <TouchableOpacity
                       key={index}
-                      onPress={() => handleDoublePress(demande)}
-                      onLongPress={() => {
+                      onLongPress={() => handleDoublePress(demande)}
+                      onPress={() => {
                         handleCheckBoxPress(
                           demande.DemandID,
                           checkedCards,
@@ -208,7 +212,7 @@ export default function PendingPage({ navigation }) {
                 )
             )
           ) : (
-            <Text>Loading dazdzad...</Text>
+            <Text className="text-xl text-center  mt-[60%]">Loading ...</Text>
           )}
         </ScrollView>
       </TouchableOpacity>

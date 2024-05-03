@@ -6,7 +6,16 @@ import NotificationCard from "../components/notification-card";
 export default function NotificationsPage({ navigation }) {
   const [notificationData, setNotificationData] = useState([]);
   const [error, setError] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
 
+  const onRefresh = () => {
+    setRefreshing(true);
+
+    // Simulate refreshing the page
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
   const { fontScale } = Dimensions.get("window");
   useEffect(() => {
     NotificationHistoryData()
@@ -22,7 +31,7 @@ export default function NotificationsPage({ navigation }) {
         console.error("Error fetching notifications:", error);
         setError("Failed to load notifications");
       });
-  }, []);
+  }, [refreshing]);
 
   if (error) {
     return (
@@ -35,7 +44,12 @@ export default function NotificationsPage({ navigation }) {
   return (
     <View>
       {console.log(notificationData)}
-      <ScrollView className="h-[93%]">
+      <ScrollView
+        className="h-[93%]"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {notificationData.length > 0 && notificationData !== undefined ? (
           notificationData.map((data) => (
             <NotificationCard
@@ -45,7 +59,9 @@ export default function NotificationsPage({ navigation }) {
             />
           ))
         ) : (
-          <Text>No notifications to display.</Text>
+          <Text className="text-3xl text-center  mt-[60%]">
+            Loading notifications...
+          </Text>
         )}
       </ScrollView>
     </View>

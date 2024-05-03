@@ -19,7 +19,7 @@ export default function QRCodeScanner({ route }) {
     })();
   }, []);
   const changeDemand = () => {
-    setStatus(status === "en cours" ? "collecté" : "en cours");
+    setStatus(status === "en cours" ? "collected" : "en cours");
     console.log(status);
   };
   const handleBarCodeScanned = ({ data }) => {

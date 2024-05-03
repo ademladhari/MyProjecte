@@ -10,6 +10,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
+  getCoordinatesForMap,
   getStatusAddress,
   getStatusAddressForMap,
   getStatusLabName,
@@ -20,8 +21,7 @@ import { fetchMedications } from "../redux/actions/actiondata";
 
 export default function DetailsScreen({ route, navigation }) {
   const dispatch = useDispatch();
-  const demandes = useSelector((state) => state.demandes.demandes);
-  const { demande } = route.params;
+  const { demande, setdemandes, page } = route.params;
   const [updateDemande, setdUpdatedemande] = useState(demande);
   const [userData, setUserData] = useState(null);
   useEffect(() => {
@@ -45,12 +45,12 @@ export default function DetailsScreen({ route, navigation }) {
     // Determine the next status based on the current status
     switch (updateDemande.Status) {
       case "en cours":
-        updatedStatus = "affecté";
+        updatedStatus = "affected";
         break;
-      case "affecté":
-        updatedStatus = "collecté";
+      case "affected":
+        updatedStatus = "collected";
         break;
-      case "collecté":
+      case "collected":
         updatedStatus = "livre";
         break;
       case "livre":
@@ -60,7 +60,7 @@ export default function DetailsScreen({ route, navigation }) {
         updatedStatus = "en cours";
         break;
     }
-
+    console.log(updateDemande);
     // Update the demande object with the new status and other properties
     setdUpdatedemande((prevDemande) => ({
       ...prevDemande,
@@ -68,6 +68,16 @@ export default function DetailsScreen({ route, navigation }) {
       Address: getStatusAddressForMap(prevDemande),
       name: getStatusLabName(prevDemande),
     }));
+    setdemandes((prevDemandes) => {
+      return prevDemandes.map((demande) => {
+        console.log(demande.DemandID, updateDemande.DemandID);
+        if (demande.DemandID === updateDemande.DemandID) {
+          console.log("here");
+          return { ...demande, Status: updatedStatus, agentUserID: userData };
+        }
+        return demande;
+      });
+    });
     // Dispatch the action to update the data
     if (updateDemande.Status === "en cours") {
       dispatch(
@@ -96,20 +106,21 @@ export default function DetailsScreen({ route, navigation }) {
       <View className=" flex flex-row mb-4 ">
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Home");
+            navigation.navigate(page);
           }}
         >
           <Ionicons
+            className=" mt-48   "
             name="chevron-back"
             size={34}
             color="blue"
-            className=" ml-2 mt-8"
           />
         </TouchableOpacity>
 
         <Text className="text-2xl h-[100%]  ml-20 mt-3">Delivery Details</Text>
       </View>
       <View className="h-[35%]">
+        {console.log("coords", getCoordinatesForMap(updateDemande))}
         {userData && (
           <CustomerDetails
             number={updateDemande.DeparturePhoneNumber}
@@ -117,6 +128,7 @@ export default function DetailsScreen({ route, navigation }) {
             name={getStatusLabName(updateDemande)}
             statusdate={updateDemande.Statusdate}
             qrcode={updateDemande.codeQr}
+            Coordinates={getCoordinatesForMap(updateDemande)}
           />
         )}
       </View>

@@ -11,7 +11,8 @@ import {
   ScrollY,
   TextInput,
   KeyboardAvoidingView,
-  Platform, // Import TextInput for search input
+  Platform,
+  RefreshControl, // Import TextInput for search input
 } from "react-native";
 import { Dimensions } from "react-native";
 const screenWidth = Dimensions.get("window").width;
@@ -28,6 +29,8 @@ import { FontAwesome5 } from "@expo/vector-icons";
 export default function HomePage({ navigation }) {
   const currentDate = new Date();
   const [count, setCount] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+
   // Format date as desired (e.g., "February 28, 2024")
   const formattedDate = currentDate.toLocaleDateString("en-EUROPE", {
     weekday: "long",
@@ -77,7 +80,7 @@ export default function HomePage({ navigation }) {
     };
 
     fetchData();
-  }, [userID]);
+  }, [userID, refreshing]);
   // useEffect(() => {
   //   const fetchData = async () => {
   //     try {
@@ -148,6 +151,15 @@ export default function HomePage({ navigation }) {
 
   const maxVisibleLabels = 8; // Set this to the maximum number of labels you want to display
   const xLabelsOffset = -(data.labels.length - maxVisibleLabels);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+
+    // Simulate refreshing the page
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
   return (
     <>
       <KeyboardAvoidingView
@@ -178,7 +190,12 @@ export default function HomePage({ navigation }) {
           />
         </TouchableOpacity>
       </KeyboardAvoidingView>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View
           style={{
             position: "absolute",

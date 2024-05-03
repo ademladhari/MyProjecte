@@ -3,10 +3,10 @@ import { Button, View, Alert } from "react-native";
 import MapView, { Marker as MapMarker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
 
-export default function Map() {
+export default function Map({ route }) {
   const [currentLocation, setCurrentLocation] = useState(null);
-  const [destination, setDestination] = useState(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
+  const { destination } = route.params;
 
   useEffect(() => {
     async function fetchRoute() {
@@ -34,46 +34,6 @@ export default function Map() {
     }
     fetchRoute();
   }, [currentLocation, destination]);
-
-  useEffect(() => {
-    const fetchDestinationCoordinates = async () => {
-      const placeName =
-        "Institut Supérieur d'Informatique et des Technologies de Communication";
-      const locality = "Hammam Sousse"; // More specific locality
-      const country = "tunisia";
-      const apiKey = "61c5418d7de145818eee5865cf68d51e"; // Use your actual OpenCage API key
-      const apiUrl = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
-        placeName + ", " + locality + ", " + country
-      )}&key=${apiKey}`;
-
-      try {
-        console.log("Requesting:", apiUrl); // Check the complete URL
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        console.log("Response:", data); // Check the raw response
-        if (data.results && data.results.length > 0) {
-          const { lat, lng } = data.results[0].geometry;
-          setDestination({
-            latitude: lat,
-            longitude: lng,
-          });
-        } else {
-          console.error("No results found or error in response:", data);
-          Alert.alert(
-            "Geocoding Error",
-            "No results found. Please check the place name and try again."
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching destination coordinates:", error);
-        Alert.alert(
-          "API Error",
-          "Failed to fetch destination coordinates. Check console for more details."
-        );
-      }
-    };
-    fetchDestinationCoordinates();
-  }, []);
 
   const requestLocationPermission = async () => {
     try {

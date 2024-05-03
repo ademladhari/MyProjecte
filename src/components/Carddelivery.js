@@ -97,6 +97,9 @@ const Carddelivery = (props) => {
 
         <View className="w-[50%]">
           <Text className=" text-lg  text-Bold font-normal ">{name}</Text>
+          <Text className=" text-lg  text-Bold font-normal ">
+            {demande.DemandID}
+          </Text>
           <View className="w-[100%] h-[70%] pt-2  flex flex-row">
             <MaterialIcons
               name="place"

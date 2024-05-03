@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
   ScrollY,
+  RefreshControl,
 } from "react-native";
 import Carddelivery from "../components/Carddelivery";
 import { useContext, useEffect, useState } from "react";
@@ -48,10 +49,9 @@ export default function PendingPage({ navigation }) {
   const updateStatusForChecked = () => {
     // Update filteredDemandes after modifying them
     console.log(checkedCards);
-    const updatedFilteredDemandes = demandes.map((demande) => {
-      console.log(demande.DemandID);
+    const updatedFilteredDemandes = filteredDemandes.map((demande) => {
       if (checkedCards.includes(demande.DemandID)) {
-        return { ...demande, Status: "affecté" };
+        return { ...demande, Status: "collected" };
       }
       return demande;
     });
@@ -70,10 +70,19 @@ export default function PendingPage({ navigation }) {
     };
 
     fetchUserData();
-  }, []);
-  const [lastPress, setLastPress] = useState(0);
-  const [lastDemandeID, setLastDemandeID] = useState(0);
+  }, [refreshing]);
+
   const dispatch = useDispatch();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    resetCheckBoxs();
+    // Simulate refreshing the page
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
 
   const demandes = useSelector((state) => state.userData.UserData);
   console.log("demandes,", demandes);
@@ -92,7 +101,8 @@ export default function PendingPage({ navigation }) {
       }
     };
     fetchData();
-  }, [dispatch, userID]);
+  }, [dispatch, userID, refreshing]);
+
   useEffect(() => {
     // Filter demandes based on the search query and selected category
     if (demandes) {
@@ -124,9 +134,11 @@ export default function PendingPage({ navigation }) {
               searchQuery.toLowerCase()
             )
           );
-        } else if (searchBy === "name") {
+        } else if (searchBy === "ArrivalAddress") {
           filterd = filterd.filter((demande) =>
-            demande.name.toLowerCase().includes(searchQuery.toLowerCase())
+            demande.ArrivalAddress.toLowerCase().includes(
+              searchQuery.toLowerCase()
+            )
           );
         }
       }
@@ -136,25 +148,11 @@ export default function PendingPage({ navigation }) {
     }
   }, [demandes, searchQuery, searchBy]);
   const handleDoublePress = (demande) => {
-    const currentTime = new Date().getTime();
-    const delta = currentTime - lastPress;
-
-    // Check if the current demande is the same as the last one and the time between presses is less than 500 milliseconds
-    if (demande.DemandID === lastDemandeID && delta < 500) {
-      // Time between two presses is less than 500 milliseconds, consider it a double press
-      handleCheckBoxPress(demande.DemandID, checkedCards, setCheckedCards);
-      setshowCheckbox(true);
-      navigation.navigate("DetailsScreen", {
-        demande: demande,
-      });
-    } else {
-      handleCheckBoxPress(demande.DemandID, checkedCards, setCheckedCards);
-      setshowCheckbox(true);
-    }
-
-    // Store the current demande ID and time of press
-    setLastDemandeID(demande.DemandID);
-    setLastPress(currentTime);
+    navigation.navigate("DetailsScreen", {
+      demande: demande,
+      setdemandes: setfilteredDemandes,
+      page: "Pending",
+    });
   };
   return (
     <>
@@ -171,16 +169,23 @@ export default function PendingPage({ navigation }) {
           setSearchQuery={setSearchQuery}
           searchBy={searchBy}
         ></SearchBar>
-        <ScrollView className="h-[30%] ">
+        <ScrollView
+          className="h-[30%] "
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          {console.log("demandlength", demandes.length)}
+          {console.log("fildemandslength", filteredDemandes.length)}
           {demandes !== null && filteredDemandes.length > 0 ? (
             filteredDemandes.map(
               (demande, index) =>
-                demande.Status === "affecté" && (
+                demande.Status === "affected" && (
                   <View className="h-[90px] my-3">
                     <TouchableOpacity
                       key={index}
-                      onPress={() => handleDoublePress(demande)}
-                      onLongPress={() => {
+                      onLongPress={() => handleDoublePress(demande)}
+                      onPress={() => {
                         handleCheckBoxPress(
                           demande.DemandID,
                           checkedCards,
@@ -210,7 +215,9 @@ export default function PendingPage({ navigation }) {
                 )
             )
           ) : (
-            <Text>Loading dazdzad...</Text>
+            <Text className="text-3xl text-center  mt-[60%]">
+              Loading Data...
+            </Text>
           )}
         </ScrollView>
       </TouchableOpacity>
@@ -218,9 +225,9 @@ export default function PendingPage({ navigation }) {
         <ShowCheckedIdsButton
           checkedIds={checkedCards}
           marginbottom={"mb-2"}
-          state={"collecté"}
+          state={"collected"}
           onPress={() => {
-            handleShowCheckedIds(checkedCards, dispatch, "collecté");
+            handleShowCheckedIds(checkedCards, dispatch, "collected");
             updateStatusForChecked();
             resetCheckBoxs();
           }}
@@ -242,13 +249,13 @@ function CollectedCount(demandes) {
   if (!demandes || !Array.isArray(demandes)) return 0;
 
   return demandes.reduce((count, demande) => {
-    return demande.Status === "collecté" ? count + 1 : count;
+    return demande.Status === "collected" ? count + 1 : count;
   }, 0);
 }
 function PendingCount(demandes) {
   if (!demandes || !Array.isArray(demandes)) return 0;
 
   return demandes.reduce((count, demande) => {
-    return demande.Status === "affecté" ? count + 1 : count;
+    return demande.Status === "affected" ? count + 1 : count;
   }, 0);
 }

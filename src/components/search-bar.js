@@ -11,7 +11,7 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function SearchBar({ setSearchQuery, searchBy, setSearchBy }) {
-  const searchOptions = ["requestName", "DepartureAddress", "Name"];
+  const searchOptions = ["requestName", "DepartureAddress", "ArrivalAddress"];
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleSearchOptionSelect = (option) => {

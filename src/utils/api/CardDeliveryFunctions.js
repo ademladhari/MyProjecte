@@ -28,7 +28,7 @@ export const handleShowCheckedIds = async (checkedCards, dispatch, status) => {
     checkedCards.forEach((cardId) => {
       // Dispatch patchData action to update status
 
-      if (status === "affecté") {
+      if (status === "affected") {
         dispatch(
           patchData(cardId, {
             Status: status,
