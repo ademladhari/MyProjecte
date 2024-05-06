@@ -23,6 +23,20 @@ export const NotificationTokenPost = async (UserID, NotificationToken) => {
     throw error; // Re-throw the error to handle it elsewhere if needed
   }
 };
+export const updateDemandes = async (groupIds) => {
+  try {
+    console.log("he", groupIds);
+    const response = await getApi.post("/MobileDemand/AffectGroup", {
+      arrivalLabId: "28",
+      departureLabId: "29",
+      demandeIds: groupIds,
+    });
+    return response; // Assuming you want to return the response data
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error; // Re-throw the error to handle it elsewhere if needed
+  }
+};
 // prettier-ignore
 export const NotificationTokenDelete = async (NotifcationID) => {
   try {

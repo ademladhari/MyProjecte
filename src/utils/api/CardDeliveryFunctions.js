@@ -1,5 +1,6 @@
 import { patchData } from "../../redux/actions/ActionUpdate";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { updateDemandes } from "../../services/Notificaiton";
 
 export const handleCheckBoxPress = (cardId, checkedCards, setCheckedCards) => {
   if (checkedCards.includes(cardId)) {
@@ -23,10 +24,13 @@ export const handleShowCheckedIds = async (checkedCards, dispatch, status) => {
   console.log(user.UserID);
   if (checkedCards.length > 0) {
     // If updateDemande and demandId are available, dispatch patchData action
-
+    if (status === "collected") {
+      updateDemandes(checkedCards);
+      return;
+    }
     // Iterate over the checked card IDs and update their status
     checkedCards.forEach((cardId) => {
-      // Dispatch patchData action to update status
+      // Dispatch patchData a ction to update status
 
       if (status === "affected") {
         dispatch(
